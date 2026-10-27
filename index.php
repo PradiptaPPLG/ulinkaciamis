@@ -232,6 +232,110 @@
     .custom-pin:hover {
       transform: scale(1.22);
     }
+
+    /* ================= HERO CAROUSEL ================= */
+    .hero-carousel-container {
+      position: relative;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 20px 35px -10px rgba(74, 5, 63, 0.35);
+      background: #1e021a;
+      min-height: 440px;
+    }
+    @media (min-width: 640px) {
+      .hero-carousel-container {
+        min-height: 420px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .hero-carousel-container {
+        min-height: 440px;
+      }
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.85s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .hero-slide-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1);
+      transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .hero-slide.active .hero-slide-bg {
+      transform: scale(1.06);
+    }
+
+    .hero-gradient-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(23, 2, 20, 0.94) 0%, rgba(55, 6, 47, 0.85) 45%, rgba(20, 2, 18, 0.58) 75%, rgba(10, 1, 9, 0.35) 100%);
+    }
+
+    @media (max-width: 768px) {
+      .hero-gradient-overlay {
+        background: linear-gradient(180deg, rgba(20, 2, 18, 0.65) 0%, rgba(40, 4, 34, 0.88) 45%, rgba(15, 1, 13, 0.97) 100%);
+      }
+    }
+
+    .hero-nav-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      z-index: 20;
+    }
+    .hero-nav-btn:hover {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(255, 255, 255, 0.45);
+      transform: scale(1.06);
+    }
+
+    .hero-dot-indicator {
+      height: 8px;
+      width: 10px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.35);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+    .hero-dot-indicator:hover {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .hero-dot-indicator.active {
+      width: 32px !important;
+      background: #fbbf24 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased pb-24 md:pb-12">
@@ -275,39 +379,171 @@
 
   <!-- ================= TAB 1: BERANDA ================= -->
   <div id="tab-beranda" class="tab-content block">
-    <!-- Hero Section -->
+    <!-- Hero Carousel Section -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-3">
-      <div class="relative bg-gradient-to-br from-[#4a053f] via-[#750962] to-[#1e021a] rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-xl shadow-purple-950/25 border border-[#9e0b84]/25">
-        <div class="absolute -right-8 -bottom-8 w-72 h-72 bg-[#9e0b84]/30 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-10 -top-10 w-56 h-56 bg-[#d000ff]/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute right-12 top-6 hidden lg:flex flex-col gap-2 bg-white/10 backdrop-blur-md border border-white/15 p-4 rounded-2xl w-64">
-          <span class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">Info Singgah Jalur Selatan</span>
-          <p class="text-xs text-slate-100 leading-relaxed">Melintas dari arah Bandung/Tasik menuju Pangandaran? Mampir 30–60 menit ke kuliner, situs Galuh, & pusat oleh-oleh Ciamis!</p>
-          <button onclick="quickJumpMood('transit')" class="mt-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-[11px] rounded-xl transition flex items-center justify-center gap-1">
+      <div id="heroCarousel" class="hero-carousel-container relative text-white border border-[#9e0b84]/30 group" onmouseenter="pauseHeroAutoplay()" onmouseleave="resumeHeroAutoplay()">
+        
+        <!-- SLIDE 1: Alun-Alun Ciamis (Aerial View) -->
+        <div class="hero-slide active" data-slide-index="0">
+          <img src="/ulinkaciamis/assets/images/hero_alun_alun_aerial.jpg" alt="Alun-Alun Ciamis Panorama" class="hero-slide-bg" />
+          <div class="hero-gradient-overlay"></div>
+          
+          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-white/20 shadow-sm">
+                <i class="ph-fill ph-sparkle text-amber-300"></i> Direktori Resmi Tatar Galuh
+              </span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
+                Eksplorasi Wisata, Sejarah Galuh, Kuliner &amp; Fasilitas di Ciamis
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
+                Dari segarnya aliran sungai Gunung Sawal, jejak Kerajaan Sunda Galuh, kuliner legendaris, spot WFC tenang, hingga fasilitas publik lengkap di pusat kota.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-2">
+              <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-[#9e0b84] font-bold text-xs sm:text-sm shadow-lg hover:bg-fuchsia-50 transition flex items-center gap-2">
+                <i class="ph-bold ph-magnifying-glass"></i> Mulai Eksplorasi
+              </button>
+              <button onclick="quickJumpMood('gratis-murah')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
+                <i class="ph-bold ph-ticket"></i> Wisata Gratis &amp; Hemat
+              </button>
+              <button onclick="focusToLandmark(-7.326694, 108.353192, 'Alun-Alun Ciamis')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-medium text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/15">
+                <i class="ph-bold ph-map-pin"></i> Buka Titik di Peta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Jembatan Cirahong (Warisan 1893) -->
+        <div class="hero-slide" data-slide-index="1">
+          <img src="/ulinkaciamis/assets/images/hero_jembatan_cirahong.jpg" alt="Jembatan Kereta Api Cirahong" class="hero-slide-bg" />
+          <div class="hero-gradient-overlay"></div>
+          
+          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/25 backdrop-blur-md text-amber-200 text-xs font-semibold rounded-full mb-3 border border-amber-400/30 shadow-sm">
+                <i class="ph-fill ph-train text-amber-300"></i> Warisan Sejarah &amp; Ikon Heritage Ciamis
+              </span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
+                Jembatan Cirahong — Saksi Bisu Kejayaan Kereta Api Lembah Galuh
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
+                Mahakarya arsitektur jembatan baja ganda peninggalan tahun 1893 di Tatar Galuh yang melintasi lembah Sungai Citanduy dengan panorama spektakuler.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-2">
+              <button onclick="focusToLandmark(-7.3512, 108.3245, 'Jembatan Cirahong')" class="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                <i class="ph-bold ph-map-pin"></i> Lihat Titik Cirahong di Peta
+              </button>
+              <button onclick="quickJumpCategory('sejarah')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
+                <i class="ph-bold ph-castle-turret"></i> Koleksi Situs Sejarah
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Wisata Alam Sungai Cireong & Cadas Ngampar -->
+        <div class="hero-slide" data-slide-index="2">
+          <img src="/ulinkaciamis/assets/images/hero_sungai_cireong.png" alt="Sungai Cireong & Cadas Ngampar Ciamis" class="hero-slide-bg" />
+          <div class="hero-gradient-overlay"></div>
+          
+          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/25 backdrop-blur-md text-emerald-200 text-xs font-semibold rounded-full mb-3 border border-emerald-400/30 shadow-sm">
+                <i class="ph-fill ph-drop text-cyan-300"></i> Kesejukan Lereng Gunung Sawal
+              </span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
+                Segarnya Ngarai Alami Sungai Cireong &amp; Bebatuan Cadas Ngampar
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
+                Berenang di jernihnya air sungai pegunungan berpadu formasi bebatuan eksotis, udara sejuk khas pedesaan Sunda yang tenang untuk liburan keluarga dan healing.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-2">
+              <button onclick="quickJumpCategory('curug')" class="px-5 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                <i class="ph-bold ph-drop"></i> Eksplor Curug &amp; Wisata Sungai
+              </button>
+              <button onclick="focusToLandmark(-7.2680, 108.2450, 'Sungai Cireong')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
+                <i class="ph-bold ph-compass"></i> Buka Lokasi di Peta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Taman Rekreasi & Monumen Ciamis Mantap -->
+        <div class="hero-slide" data-slide-index="3">
+          <img src="/ulinkaciamis/assets/images/hero_alun_alun_monumen.jpg" alt="Taman Monumen Ciamis Mantap" class="hero-slide-bg" />
+          <div class="hero-gradient-overlay"></div>
+          
+          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-fuchsia-500/25 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-pink-400/30 shadow-sm">
+                <i class="ph-fill ph-flower text-amber-300"></i> Mahayunan Ayuna Kadatuan
+              </span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
+                Pusat Rekreasi Budaya, Taman Kota, &amp; Ragam Kuliner Tradisi Ciamis
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
+                Singgah di ruang publik hijau terbuka, nikmati gemerlap kuliner malam khas Tatar Galuh, pusat oleh-oleh Galendo, serta fasilitas publik ramah keluarga.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 pt-2">
+              <button onclick="quickJumpCategory('kuliner')" class="px-5 py-3 rounded-2xl bg-pink-400 hover:bg-pink-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                <i class="ph-bold ph-fork-knife"></i> Cari Kuliner &amp; Oleh-Oleh
+              </button>
+              <button onclick="quickJumpMood('transit')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
+                <i class="ph-bold ph-car"></i> Titik Singgah Jalur Selatan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FLOATING JALUR SELATAN CARD (Upper Right on Desktop) -->
+        <div class="absolute right-8 top-8 z-20 hidden lg:flex flex-col gap-2 bg-slate-950/60 backdrop-blur-md border border-white/20 p-4 rounded-2xl w-64 shadow-2xl">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold text-amber-300 uppercase tracking-wider">
+            <i class="ph-bold ph-compass"></i> Info Singgah Jalur Selatan
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed">
+            Melintas Bandung/Tasik menuju Pangandaran? Mampir 30–60 menit ke kuliner, situs Galuh, &amp; oleh-oleh Ciamis!
+          </p>
+          <button onclick="quickJumpMood('transit')" class="mt-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[11px] rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
             <i class="ph-bold ph-car"></i> Lihat Spot Singgah Cepat
           </button>
         </div>
 
-        <div class="max-w-xl relative z-10">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-white/15">
-            <i class="ph-fill ph-sparkle text-amber-400"></i> Direktori Resmi & Panduan Tatar Galuh
-          </span>
-          <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2">
-            Eksplorasi Wisata, Sejarah Galuh, Kuliner & Fasilitas di Ciamis
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-200 mb-5 leading-relaxed">
-            Dari segarnya aliran sungai Gunung Sawal, jejak Kerajaan Sunda Galuh, kuliner legendaris, spot WFC tenang, hingga fasilitas publik lengkap di pusat kota.
-          </p>
+        <!-- PREV & NEXT BUTTONS -->
+        <button onclick="prevHeroSlide()" aria-label="Slide Sebelumnya" class="hero-nav-btn absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="ph-bold ph-caret-left text-lg"></i>
+        </button>
+        <button onclick="nextHeroSlide()" aria-label="Slide Selanjutnya" class="hero-nav-btn absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <i class="ph-bold ph-caret-right text-lg"></i>
+        </button>
 
-          <div class="flex flex-wrap items-center gap-2.5">
-            <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-[#9e0b84] font-bold text-xs sm:text-sm shadow-md hover:bg-fuchsia-50 transition flex items-center gap-2">
-              <i class="ph-bold ph-magnifying-glass"></i> Mulai Eksplorasi
-            </button>
-            <button onclick="quickJumpMood('gratis-murah')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5">
-              <i class="ph-bold ph-ticket"></i> Wisata Gratis & Hemat
-            </button>
+        <!-- BOTTOM CONTROLS & LOCATION BADGE -->
+        <div class="absolute bottom-4 left-6 right-6 sm:bottom-6 sm:left-10 sm:right-10 z-20 flex items-center justify-between pointer-events-none">
+          <!-- Dot Indicators -->
+          <div class="flex items-center gap-2 pointer-events-auto">
+            <button onclick="goToHeroSlide(0)" class="hero-dot-indicator active w-8" data-dot="0" aria-label="Slide 1"></button>
+            <button onclick="goToHeroSlide(1)" class="hero-dot-indicator w-2.5" data-dot="1" aria-label="Slide 2"></button>
+            <button onclick="goToHeroSlide(2)" class="hero-dot-indicator w-2.5" data-dot="2" aria-label="Slide 3"></button>
+            <button onclick="goToHeroSlide(3)" class="hero-dot-indicator w-2.5" data-dot="3" aria-label="Slide 4"></button>
+          </div>
+
+          <!-- Location Badge & Slide Counter -->
+          <div class="flex items-center gap-2 pointer-events-auto">
+            <div id="heroLocationTag" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-slate-950/50 backdrop-blur-md text-slate-200 text-[11px] font-medium rounded-full border border-white/15 shadow-sm">
+              <i class="ph-bold ph-map-pin text-amber-400"></i> Alun-Alun Ciamis Kota
+            </div>
+            <div class="px-2.5 py-1 bg-slate-950/50 backdrop-blur-md text-slate-200 text-[11px] font-semibold rounded-full border border-white/15 shadow-sm">
+              <span id="heroSlideCounter" class="text-white font-bold">1</span> / 4
+            </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -1313,10 +1549,120 @@
       if (event.target === document.getElementById('detailModal')) closeModal();
     };
 
+    // ================= HERO CAROUSEL ENGINE =================
+    let currentHeroSlide = 0;
+    const totalHeroSlides = 4;
+    let heroAutoplayInterval = null;
+    const heroLocations = [
+      'Alun-Alun Ciamis Kota',
+      'Jembatan Cirahong (1893) Manonjaya–Ciamis',
+      'Wisata Alam Sungai Cireong & Cadas Ngampar',
+      'Taman Rekreasi & Monumen Ciamis Mantap'
+    ];
+
+    function showHeroSlide(index) {
+      currentHeroSlide = (index + totalHeroSlides) % totalHeroSlides;
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot-indicator');
+      
+      slides.forEach((slide, idx) => {
+        if (idx === currentHeroSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      dots.forEach((dot, idx) => {
+        if (idx === currentHeroSlide) {
+          dot.classList.add('active');
+          dot.style.width = '32px';
+        } else {
+          dot.classList.remove('active');
+          dot.style.width = '10px';
+        }
+      });
+
+      const counterEl = document.getElementById('heroSlideCounter');
+      if (counterEl) counterEl.textContent = currentHeroSlide + 1;
+
+      const locEl = document.getElementById('heroLocationTag');
+      if (locEl) {
+        locEl.innerHTML = `<i class="ph-bold ph-map-pin text-amber-400"></i> ${heroLocations[currentHeroSlide]}`;
+      }
+    }
+
+    function nextHeroSlide() {
+      showHeroSlide(currentHeroSlide + 1);
+    }
+
+    function prevHeroSlide() {
+      showHeroSlide(currentHeroSlide - 1);
+    }
+
+    function goToHeroSlide(index) {
+      showHeroSlide(index);
+    }
+
+    function startHeroAutoplay() {
+      if (heroAutoplayInterval) clearInterval(heroAutoplayInterval);
+      heroAutoplayInterval = setInterval(nextHeroSlide, 5500);
+    }
+
+    function pauseHeroAutoplay() {
+      if (heroAutoplayInterval) {
+        clearInterval(heroAutoplayInterval);
+        heroAutoplayInterval = null;
+      }
+    }
+
+    function resumeHeroAutoplay() {
+      startHeroAutoplay();
+    }
+
+    function focusToLandmark(lat, lng, name) {
+      switchTab('beranda');
+      setTimeout(() => {
+        if (window.mapInstance) {
+          window.mapInstance.flyTo([lat, lng], 15, { duration: 1.2 });
+        }
+        const mapSection = document.getElementById('mapSection') || document.getElementById('map');
+        if (mapSection) {
+          mapSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 200);
+    }
+
+    function initHeroCarousel() {
+      const heroContainer = document.getElementById('heroCarousel');
+      if (heroContainer) {
+        let heroTouchStartX = 0;
+        let heroTouchEndX = 0;
+
+        heroContainer.addEventListener('touchstart', (e) => {
+          heroTouchStartX = e.changedTouches[0].screenX;
+          pauseHeroAutoplay();
+        }, { passive: true });
+
+        heroContainer.addEventListener('touchend', (e) => {
+          heroTouchEndX = e.changedTouches[0].screenX;
+          const diff = heroTouchStartX - heroTouchEndX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) nextHeroSlide();
+            else prevHeroSlide();
+          }
+          resumeHeroAutoplay();
+        }, { passive: true });
+      }
+
+      startHeroAutoplay();
+    }
+
     // Auto-init on page load
     window.addEventListener('DOMContentLoaded', () => {
       initCiamisMap();
       loadDataFromAPI();
+      initHeroCarousel();
     });
   </script>
 </body>
