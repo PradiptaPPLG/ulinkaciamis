@@ -75,12 +75,29 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .leaflet-pane { z-index: 10 !important; }
     .leaflet-top, .leaflet-bottom { z-index: 11 !important; }
-    /* Custom Real Photo Pin Marker */
+    /* ================= LEAFLET ZOOM HARDWARE ACCELERATION & ZERO JANK ================= */
+    /* Matikan CSS transition saat animasi zoom Leaflet agar tidak bentrok dengan kalkulasi matrix transformasi */
+    .leaflet-zoom-anim .custom-photo-marker,
+    .leaflet-zoom-anim .photo-pin-wrapper,
+    .leaflet-zoom-anim .photo-pin-body,
+    .leaflet-zoom-anim .photo-pin-cropper,
+    .leaflet-zoom-anim .photo-pin-img,
+    .leaflet-zoom-anim .photo-pin-tip,
+    .leaflet-zoom-anim .photo-pin-badge {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    /* Custom Real Photo Pin Marker - GPU Accelerated Layer */
     .custom-photo-marker {
       background: transparent !important;
       border: none !important;
       width: 38px !important;
       height: 46px !important;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      contain: layout paint;
     }
     .photo-pin-wrapper {
       position: relative !important;
@@ -91,15 +108,10 @@
       width: 38px !important;
       height: 46px !important;
       cursor: pointer !important;
-      transform-origin: 19px 44px !important;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0.1s !important;
       margin: 0 !important;
       padding: 0 !important;
       user-select: none !important;
-    }
-    .photo-pin-wrapper:hover {
-      transform: scale(1.24) translateY(-4px) !important;
-      z-index: 999999 !important;
+      contain: layout paint;
     }
     .photo-pin-body {
       position: relative !important;
@@ -120,9 +132,7 @@
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-    }
-    .photo-pin-wrapper:hover .photo-pin-body {
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5) !important;
+      contain: layout paint;
     }
     .photo-pin-cropper {
       width: 100% !important;
@@ -152,6 +162,9 @@
       aspect-ratio: 1 / 1 !important;
       display: block !important;
       pointer-events: none !important;
+      content-visibility: auto;
+      backface-visibility: hidden;
+      transform: translateZ(0);
     }
     .photo-pin-badge {
       position: absolute !important;
@@ -184,29 +197,11 @@
       margin-right: auto !important;
       filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25)) !important;
     }
-    .photo-pin-label {
-      opacity: 0;
-      visibility: hidden;
-      position: absolute;
-      top: -26px;
-      background: rgba(15, 23, 42, 0.94);
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 9999px;
-      white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      pointer-events: none;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-      transform: translateY(4px);
-      z-index: 9999999 !important;
+    .leaflet-zoom-anim .photo-pin-tip {
+      filter: none !important;
     }
-    .photo-pin-wrapper:hover .photo-pin-label {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
+    .photo-pin-label {
+      display: none !important;
     }
     .leaflet-popup-content-wrapper {
       border-radius: 18px;
@@ -226,11 +221,7 @@
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
       color: #ffffff;
       font-size: 14px;
-      transition: transform 0.2s ease;
       cursor: pointer;
-    }
-    .custom-pin:hover {
-      transform: scale(1.22);
     }
 
     /* ================= HERO CAROUSEL ================= */
@@ -575,19 +566,19 @@
           <button type="button" onclick="flyToSpot(-7.3267, 108.3511, 16, 'Masjid Agung Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🕌 Masjid Agung
           </button>
-          <button type="button" onclick="flyToSpot(-7.1352, 108.2811, 15, 'Situ Lengkong Panjalu')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.1272, 108.2725, 15, 'Situ Lengkong Panjalu')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🏞️ Situ Panjalu
           </button>
-          <button type="button" onclick="flyToSpot(-7.1950, 108.3680, 15, 'Astana Gede Kawali')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.1901, 108.3628, 15, 'Astana Gede Kawali')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             📜 Kawali
           </button>
-          <button type="button" onclick="flyToSpot(-7.2785, 108.3180, 15, 'Cadas Ngampar')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.2480, 108.3095, 15, 'Cadas Ngampar')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🌊 Cadas Ngampar
           </button>
-          <button type="button" onclick="flyToSpot(-7.3341, 108.3565, 16, 'Stadion Galuh Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.3342, 108.3564, 16, 'Stadion Galuh Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             ⚽ Stadion Galuh
           </button>
-          <button type="button" onclick="flyToSpot(-7.3512, 108.3245, 16, 'Jembatan Cirahong')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.3401, 108.3171, 16, 'Jembatan Cirahong')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🌉 Jembatan Cirahong
           </button>
           <button type="button" onclick="resetMapView()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap flex items-center gap-1 transition">
@@ -600,7 +591,7 @@
             <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
               <i class="ph-fill ph-map-pin text-[#9e0b84] text-xl"></i> Peta Interaktif Sebaran Pin Foto Asli
             </h3>
-            <p class="text-xs text-slate-500">Pin menampilkan foto asli tempat. Arahkan kursor atau klik pin untuk melihat detail informasi.</p>
+            <p class="text-xs text-slate-500">Pin menampilkan foto asli tempat. Klik pin untuk melihat detail informasi dan rute lokasi.</p>
           </div>
           
           <!-- Filter Pin Kategori Langsung -->
@@ -1000,7 +991,34 @@
       updateFavoriteUI();
     }
 
-    // 2. Inisialisasi Peta Leaflet Google Maps Roadmap & Foto Pin Asli
+    // Helper Functions: Smart WebP Thumbnail & Optimized Image Resolvers
+    function getThumbPhotoUrl(url) {
+      if (!url) return fallbackImage;
+      try {
+        const parts = url.split('/');
+        const filename = parts[parts.length - 1];
+        const dotIndex = filename.lastIndexOf('.');
+        const nameNoExt = dotIndex !== -1 ? filename.substring(0, dotIndex) : filename;
+        return `/ulinkaciamis/assets/images/thumbs/${nameNoExt}.webp`;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    function getOptimizedPhotoUrl(url) {
+      if (!url) return fallbackImage;
+      try {
+        const parts = url.split('/');
+        const filename = parts[parts.length - 1];
+        const dotIndex = filename.lastIndexOf('.');
+        const nameNoExt = dotIndex !== -1 ? filename.substring(0, dotIndex) : filename;
+        return `/ulinkaciamis/assets/images/optimized/${nameNoExt}.webp`;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    // 2. Inisialisasi Peta Leaflet Google Maps Roadmap & Foto Pin Asli (Ultra Fast 60FPS Zoom)
     function initCiamisMap() {
       // Pusat Alun-Alun Ciamis sebagai jantung Tatar Galuh
       const alunAlunCiamis = [-7.3258, 108.3532];
@@ -1014,25 +1032,42 @@
         minZoom: 10,
         maxZoom: 20,
         maxBounds: bounds,
-        maxBoundsViscosity: 0.85
+        maxBoundsViscosity: 0.85,
+        preferCanvas: true,
+        zoomAnimation: true,
+        fadeAnimation: true,
+        markerZoomAnimation: true,
+        zoomSnap: 1,
+        wheelDebounceTime: 40,
+        wheelPxPerZoomLevel: 100
       });
 
-      // Layer 1: Google Maps Roadmap - Detail Jalan & Alun-Alun Lengkap Bahasa Indonesia (Super Fast Subdomains)
-      const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      // Konfigurasi performa tinggi untuk TileLayer
+      const tileConfig = {
         maxZoom: 20,
+        updateWhenZooming: false,
+        updateWhenIdle: true,
+        updateInterval: 120,
+        keepBuffer: 3
+      };
+
+      // Layer 1: Google Maps Roadmap - Detail Jalan & Alun-Alun Lengkap Bahasa Indonesia
+      const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        ...tileConfig,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '&copy; Google Maps'
       });
 
       // Layer 2: Google Maps Hybrid (Satelit & Label Jalan)
       const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-        maxZoom: 20,
+        ...tileConfig,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '&copy; Google Maps Satelit'
       });
 
       // Layer 3: OpenStreetMap
       const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        ...tileConfig,
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap'
       });
@@ -1084,18 +1119,19 @@
       filtered.forEach((place, index) => {
         const meta = getMetaForPlace(place);
         const photoUrl = place.foto || place.image || fallbackImage;
+        const thumbUrl = getThumbPhotoUrl(photoUrl);
+        const optUrl = getOptimizedPhotoUrl(photoUrl);
         const placeName = place.nama || place.name;
         const placeKec = place.kecamatan || 'Ciamis';
         const placePrice = place.price || place.harga || 'Gratis';
         const placeHours = place.hours || (place.jam_buka ? `${place.jam_buka} - ${place.jam_tutup}` : 'Setiap Hari');
 
-        // Real Photo Pin Marker HTML
+        // Real Photo Pin Marker HTML (Ultra-Light WebP Thumbnail ~2.5KB, Static & Clean)
         const photoPinHtml = `
           <div class="photo-pin-wrapper" title="${placeName}">
-            <div class="photo-pin-label">${placeName}</div>
             <div class="photo-pin-body" style="border-color:${meta.color};">
               <div class="photo-pin-cropper">
-                <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" alt="${placeName}" class="photo-pin-img" loading="lazy" />
+                <img src="${thumbUrl}" onerror="this.onerror=null; this.src='${photoUrl}';" alt="${placeName}" class="photo-pin-img" loading="lazy" decoding="async" />
               </div>
               <div class="photo-pin-badge" style="background:${meta.color}">
                 <i class="ph-fill ${meta.icon}"></i>
@@ -1121,8 +1157,8 @@
 
         const popupContent = `
           <div style="font-family: 'Plus Jakarta Sans', sans-serif; width: 230px;">
-            <div style="position:relative; width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-              <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" style="width:100%; height:100%; object-fit:cover;">
+            <div style="position:relative; width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); background:#1e293b;">
+              <img src="${optUrl}" onerror="this.onerror=null; this.src='${photoUrl}';" style="width:100%; height:100%; object-fit:cover;" loading="lazy" decoding="async">
               <span style="position:absolute; top:6px; left:6px; font-size:9px; font-weight:800; background:rgba(15,23,42,0.85); color:#ffffff; padding:2px 8px; border-radius:6px; text-transform:uppercase; backdrop-filter:blur(4px);">
                 ${meta.label}
               </span>
@@ -1202,7 +1238,8 @@
     function createPlaceCard(item) {
       const isFav = favoriteIds.includes(item.id);
       const meta = getMetaForPlace(item);
-      const img = item.image || item.foto || fallbackImage;
+      const rawImg = item.image || item.foto;
+      const img = getOptimizedPhotoUrl(rawImg);
       const name = item.name || item.nama;
       const kec = item.kecamatan || 'Ciamis';
       const loc = item.location || item.alamat || `Kec. ${kec}, Kabupaten Ciamis`;
@@ -1215,7 +1252,7 @@
         <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
           <div>
             <div class="relative h-44 w-full overflow-hidden bg-slate-200">
-              <img src="${img}" onerror="this.src='${fallbackImage}'" alt="${name}" class="w-full h-full object-cover">
+              <img src="${img}" onerror="this.onerror=null; this.src='${rawImg || fallbackImage}';" alt="${name}" class="w-full h-full object-cover" loading="lazy" decoding="async">
               
               <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/95 backdrop-blur-md text-slate-800 text-[10px] font-extrabold rounded-full shadow-sm flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full" style="background:${meta.color}"></span>
@@ -1450,8 +1487,10 @@
 
       const meta = getMetaForPlace(item);
       const modalImg = document.getElementById('modalImg');
-      modalImg.src = item.image || item.foto || fallbackImage;
-      modalImg.onerror = () => { modalImg.src = fallbackImage; };
+      const rawImg = item.image || item.foto;
+      modalImg.src = getOptimizedPhotoUrl(rawImg);
+      modalImg.decoding = 'async';
+      modalImg.onerror = () => { modalImg.onerror = null; modalImg.src = rawImg || fallbackImage; };
 
       const name = item.name || item.nama;
       const kec = item.kecamatan || 'Ciamis';
