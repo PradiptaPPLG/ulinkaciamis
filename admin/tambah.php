@@ -150,7 +150,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <input type="text" name="longitude" id="inputLng" placeholder="108.3625" value="<?= htmlspecialchars($_POST['longitude'] ?? '') ?>" required>
             </div>
           </div>
-          <div id="pickMap" style="height:320px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);margin-top:4px"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin:6px 0;flex-wrap:wrap;">
+            <span style="font-size:11px;color:#94a3b8;font-weight:600;"><i class="fas fa-crosshairs"></i> Lompat Cepat:</span>
+            <button type="button" onclick="jumpTo(-7.3258, 108.3532, 'Alun-Alun Ciamis')" style="padding:4px 8px;font-size:11px;background:#9e0b84;color:#fff;border:none;border-radius:6px;cursor:pointer;">🏛️ Alun-Alun Ciamis</button>
+            <button type="button" onclick="jumpTo(-7.1352, 108.2811, 'Panjalu')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">🏞️ Panjalu</button>
+            <button type="button" onclick="jumpTo(-7.1950, 108.3680, 'Kawali')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">📜 Kawali</button>
+            <button type="button" onclick="jumpTo(-7.2785, 108.3180, 'Sadananya')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">🌊 Sadananya</button>
+          </div>
+          <div id="pickMap" style="height:340px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.15);margin-top:4px"></div>
           <p class="form-hint"><i class="fas fa-hand-pointer"></i> Klik lokasi di peta Ciamis untuk menandai koordinat presisi</p>
         </div>
 
@@ -197,12 +204,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const pickMap = L.map('pickMap', { center: [-7.3276, 108.3625], zoom: 13 });
-// Esri World Street Map: Clean, full color, no API key required
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-  attribution: '&copy; Esri',
-  maxZoom: 19
+const pickMap = L.map('pickMap', { center: [-7.3258, 108.3532], zoom: 14 });
+// Google Maps Roadmap: Full Indonesian street labels, POIs, Alun-Alun Ciamis & building footprints
+L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: '&copy; Google Maps' }, {
+  attribution: '&copy; Google Maps',
+  maxZoom: 20
 }).addTo(pickMap);
+
+function jumpTo(lat, lng, name) {
+  pickMap.setView([lat, lng], 16);
+  inputLat.value = lat.toFixed(7);
+  inputLng.value = lng.toFixed(7);
+  if (pickMarker) pickMarker.setLatLng([lat, lng]);
+  else pickMarker = L.marker([lat, lng]).addTo(pickMap);
+}
 
 let pickMarker = null;
 const inputLat = document.getElementById('inputLat');

@@ -3,11 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ciamisku - Eksplorasi Wisata & Fasilitas Tatar Galuh Ciamis</title>
+  <title>UlinKa Ciamis - Eksplorasi Wisata & Fasilitas Tatar Galuh</title>
+  <link rel="icon" type="image/png" href="/ulinkaciamis/assets/images/lambang_ciamis.png">
   <meta name="description" content="Direktori resmi dan peta panduan wisata, sejarah Galuh, kuliner, cafe, UMKM, dan fasilitas umum di Kabupaten Ciamis.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ciamis: {
+              50: '#fdf2fa',
+              100: '#fae8f6',
+              200: '#f5d1ee',
+              300: '#edaae2',
+              400: '#e074d0',
+              500: '#ce44b8',
+              600: '#b2249b',
+              700: '#9e0b84',
+              800: '#850a70',
+              900: '#6d0c5c',
+              950: '#48013b'
+            },
+            emerald: {
+              50: '#fdf2fa',
+              100: '#fae8f6',
+              200: '#f5d1ee',
+              300: '#edaae2',
+              400: '#e074d0',
+              500: '#ce44b8',
+              600: '#9e0b84', // Ungu Khas Ciamis
+              700: '#850a70',
+              800: '#6d0c5c',
+              900: '#48013b',
+              950: '#2c0124'
+            },
+            teal: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce',
+              800: '#6b21a8',
+              900: '#581c87',
+              950: '#3b0764'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <!-- Phosphor Icons -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Google Font -->
@@ -25,6 +75,122 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .leaflet-pane { z-index: 10 !important; }
     .leaflet-top, .leaflet-bottom { z-index: 11 !important; }
+    /* Custom Real Photo Pin Marker */
+    .custom-photo-marker {
+      background: transparent !important;
+      border: none !important;
+    }
+    .photo-pin-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transform-origin: bottom center;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .photo-pin-wrapper:hover {
+      transform: scale(1.24) translateY(-5px);
+      z-index: 9999 !important;
+    }
+    .photo-pin-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform-origin: bottom center;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0.1s;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .photo-pin-wrapper:hover {
+      transform: scale(1.24) translateY(-4px);
+      z-index: 99999 !important;
+    }
+    .photo-pin-body {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border-width: 2.5px;
+      border-style: solid;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
+      overflow: visible;
+      transition: box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+    .photo-pin-wrapper:hover .photo-pin-body {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) !important;
+    }
+    .photo-pin-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #e2e8f0;
+    }
+    .photo-pin-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid #ffffff;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8.5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+    .photo-pin-tip {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top-width: 7px;
+      border-top-style: solid;
+      margin-top: -1px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+    }
+    .photo-pin-label {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      top: -28px;
+      background: rgba(15, 23, 42, 0.94);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.2);
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      transform: translateY(4px);
+    }
+    .photo-pin-wrapper:hover .photo-pin-label {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 18px;
+      padding: 3px;
+      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.35);
+      overflow: hidden;
+    }
+    .leaflet-popup-content {
+      margin: 8px;
+    }
     .custom-pin {
       display: flex;
       align-items: center;
@@ -40,14 +206,6 @@
     .custom-pin:hover {
       transform: scale(1.22);
     }
-    .leaflet-popup-content-wrapper {
-      border-radius: 16px;
-      padding: 4px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-    }
-    .leaflet-popup-content {
-      margin: 8px;
-    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased pb-24 md:pb-12">
@@ -56,13 +214,11 @@
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('beranda')">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-          <i class="ph-bold ph-compass text-2xl"></i>
-        </div>
-        <div>
-          <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-700 to-teal-500 bg-clip-text text-transparent leading-none">Ciamisku</h1>
-          <span class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Jelajah Tatar Galuh</span>
-        </div>
+        <img src="/ulinkaciamis/public/images/ulinkaCiamis_cropped.webp" alt="UlinKa Ciamis" class="h-6 sm:h-7 w-auto max-w-[130px] sm:max-w-[150px] object-contain transition hover:scale-105" />
+        <span class="hidden sm:inline-block h-5 w-px bg-slate-200"></span>
+        <span class="hidden sm:flex items-center gap-1.5 text-[11px] font-bold text-[#9e0b84] bg-fuchsia-50 border border-[#9e0b84]/20 px-2.5 py-1 rounded-full shadow-sm">
+          <img src="/ulinkaciamis/assets/images/lambang_ciamis.png" class="w-3.5 h-3.5 object-contain" /> Tatar Galuh
+        </span>
       </div>
 
       <!-- Desktop Nav Links -->
@@ -99,8 +255,9 @@
   <div id="tab-beranda" class="tab-content block">
     <!-- Hero Section -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-3">
-      <div class="relative bg-gradient-to-br from-emerald-800 via-teal-800 to-slate-900 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-xl shadow-emerald-950/15">
-        <div class="absolute -right-8 -bottom-8 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative bg-gradient-to-br from-[#4a053f] via-[#750962] to-[#1e021a] rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-xl shadow-purple-950/25 border border-[#9e0b84]/25">
+        <div class="absolute -right-8 -bottom-8 w-72 h-72 bg-[#9e0b84]/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-10 -top-10 w-56 h-56 bg-[#d000ff]/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute right-12 top-6 hidden lg:flex flex-col gap-2 bg-white/10 backdrop-blur-md border border-white/15 p-4 rounded-2xl w-64">
           <span class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">Info Singgah Jalur Selatan</span>
           <p class="text-xs text-slate-100 leading-relaxed">Melintas dari arah Bandung/Tasik menuju Pangandaran? Mampir 30–60 menit ke kuliner, situs Galuh, & pusat oleh-oleh Ciamis!</p>
@@ -110,7 +267,7 @@
         </div>
 
         <div class="max-w-xl relative z-10">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-md text-emerald-200 text-xs font-semibold rounded-full mb-3">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-white/15">
             <i class="ph-fill ph-sparkle text-amber-400"></i> Direktori Resmi & Panduan Tatar Galuh
           </span>
           <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2">
@@ -121,7 +278,7 @@
           </p>
 
           <div class="flex flex-wrap items-center gap-2.5">
-            <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-emerald-900 font-bold text-xs sm:text-sm shadow-md hover:bg-emerald-50 transition flex items-center gap-2">
+            <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-[#9e0b84] font-bold text-xs sm:text-sm shadow-md hover:bg-fuchsia-50 transition flex items-center gap-2">
               <i class="ph-bold ph-magnifying-glass"></i> Mulai Eksplorasi
             </button>
             <button onclick="quickJumpMood('gratis-murah')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5">
@@ -174,18 +331,66 @@
       </div>
     </section>
 
-    <!-- PETA DAERAH CIAMIS (INTERAKTIF DENGAN FILTER PIN) -->
+    <!-- PETA DAERAH CIAMIS (INTERAKTIF DENGAN PIN FOTO ASLI & GOOGLE MAPS) -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
       <div class="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+        
+        <!-- Bar Info Wilayah & Identitas Kabupaten Ciamis -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#9e0b84] text-white shadow-sm shadow-[#9e0b84]/30">
+              <img src="/ulinkaciamis/assets/images/lambang_ciamis.png" class="w-3.5 h-3.5 object-contain" /> Kabupaten Ciamis &bull; Tatar Galuh
+            </span>
+            <span class="text-xs text-slate-600 font-semibold flex items-center gap-1">
+              <i class="ph-bold ph-compass text-emerald-600"></i> Peta Navigasi Google Maps (Jalan, Alun-Alun & Fasilitas Detail)
+            </span>
+          </div>
+          <div class="text-xs text-slate-500 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-bold text-slate-800" id="mapSpotCount">64</span> Spot Terpetakan dengan Foto Asli
+          </div>
+        </div>
+
+        <!-- Toolbar Pintasan Cepat (Lompat Langsung ke Alun-Alun dll) -->
+        <div class="mb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+          <span class="text-xs font-bold text-slate-400 whitespace-nowrap flex items-center gap-1 mr-1">
+            <i class="ph-fill ph-crosshair text-emerald-600"></i> Fokus Cepat:
+          </span>
+          <button type="button" onclick="flyToSpot(-7.3258, 108.3532, 16, 'Alun-Alun Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 whitespace-nowrap flex items-center gap-1.5 shadow-sm transition">
+            🏛️ Alun-Alun Ciamis
+          </button>
+          <button type="button" onclick="flyToSpot(-7.3262, 108.3524, 16, 'Masjid Agung Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            🕌 Masjid Agung
+          </button>
+          <button type="button" onclick="flyToSpot(-7.1352, 108.2811, 15, 'Situ Lengkong Panjalu')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            🏞️ Situ Panjalu
+          </button>
+          <button type="button" onclick="flyToSpot(-7.1950, 108.3680, 15, 'Astana Gede Kawali')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            📜 Kawali
+          </button>
+          <button type="button" onclick="flyToSpot(-7.2785, 108.3180, 15, 'Cadas Ngampar')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            🌊 Cadas Ngampar
+          </button>
+          <button type="button" onclick="flyToSpot(-7.3320, 108.3580, 16, 'Stadion Galuh Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            ⚽ Stadion Galuh
+          </button>
+          <button type="button" onclick="flyToSpot(-7.3512, 108.3245, 16, 'Jembatan Cirahong')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+            🌉 Jembatan Cirahong
+          </button>
+          <button type="button" onclick="resetMapView()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap flex items-center gap-1 transition">
+            <i class="ph-bold ph-arrows-out"></i> Luaskan Peta
+          </button>
+        </div>
+
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
           <div>
             <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
-              <i class="ph-fill ph-map-pin text-emerald-600 text-xl"></i> Peta Interaktif Sebaran Destinasi Ciamis
+              <i class="ph-fill ph-map-pin text-emerald-600 text-xl"></i> Peta Interaktif Sebaran Pin Foto Asli
             </h3>
-            <p class="text-xs text-slate-500">Klik filter pin untuk menyaring kategori, atau klik pin di peta untuk info detail & rute.</p>
+            <p class="text-xs text-slate-500">Pin menampilkan foto asli tempat. Arahkan kursor atau klik pin untuk melihat detail informasi.</p>
           </div>
           
-          <!-- Filter Pin Peta Langsung -->
+          <!-- Filter Pin Kategori Langsung -->
           <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <button onclick="filterMapMarkers('all')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-900 text-white whitespace-nowrap transition" data-mapcat="all">
               Semua Pin
@@ -215,7 +420,7 @@
         </div>
 
         <!-- Wadah Map Leaflet -->
-        <div id="ciamisMap" class="w-full h-80 sm:h-[440px] rounded-2xl border border-slate-200 shadow-inner z-10"></div>
+        <div id="ciamisMap" class="w-full h-80 sm:h-[460px] rounded-2xl border border-slate-200 shadow-inner z-10"></div>
       </div>
     </section>
 
@@ -585,37 +790,61 @@
       updateFavoriteUI();
     }
 
-    // 2. Inisialisasi Peta Leaflet dengan Esri World_Street_Map (Terbukti tidak 403 / No API Key!)
+    // 2. Inisialisasi Peta Leaflet Google Maps Roadmap & Foto Pin Asli
     function initCiamisMap() {
-      // Batas wilayah Kabupaten Ciamis
-      const ciamisCenter = [-7.3276, 108.3550];
-      const southWest = L.latLng(-7.75, 108.05);
-      const northEast = L.latLng(-7.00, 108.68);
+      // Pusat Alun-Alun Ciamis sebagai jantung Tatar Galuh
+      const alunAlunCiamis = [-7.3258, 108.3532];
+      const southWest = L.latLng(-7.80, 108.00);
+      const northEast = L.latLng(-6.95, 108.75);
       const bounds = L.latLngBounds(southWest, northEast);
 
       mapInstance = L.map('ciamisMap', {
-        center: ciamisCenter,
-        zoom: 12,
+        center: alunAlunCiamis,
+        zoom: 14,
         minZoom: 10,
-        maxZoom: 18,
+        maxZoom: 20,
         maxBounds: bounds,
         maxBoundsViscosity: 0.85
       });
 
-      // Esri World Street Map: 100% Free, Reliable, Crystal Clear, No API Key, No 403 Blocks!
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '&copy; Esri & OpenStreetMap contributors',
-        maxZoom: 19
-      }).addTo(mapInstance);
+      // Layer 1: Google Maps Roadmap - Detail Jalan & Alun-Alun Lengkap Bahasa Indonesia (Super Fast Subdomains)
+      const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+      });
 
-      // Area Circle Highlight Kabupaten Ciamis
-      L.circle(ciamisCenter, {
-        color: '#10b981',
-        fillColor: '#10b981',
-        fillOpacity: 0.03,
+      // Layer 2: Google Maps Hybrid (Satelit & Label Jalan)
+      const googleHybrid = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps Satelit'
+      });
+
+      // Layer 3: OpenStreetMap
+      const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+      });
+
+      // Tambahkan Google Roadmap sebagai layer utama
+      googleRoadmap.addTo(mapInstance);
+
+      // Layer Control Switcher
+      L.control.layers({
+        "🗺️ Peta Google (Detail Jalan & Alun-Alun)": googleRoadmap,
+        "🛰️ Satelit + Nama Jalan (Google Hybrid)": googleHybrid,
+        "🌐 OpenStreetMap": osmLayer
+      }, null, { position: 'topright' }).addTo(mapInstance);
+
+      // Highlight area pusat Kabupaten Ciamis
+      L.circle(alunAlunCiamis, {
+        color: '#9e0b84',
+        fillColor: '#9e0b84',
+        fillOpacity: 0.05,
         weight: 2,
-        dashArray: '5, 8',
-        radius: 20000
+        dashArray: '4, 8',
+        radius: 3500
       }).addTo(mapInstance);
 
       markerLayerGroup = L.layerGroup().addTo(mapInstance);
@@ -638,46 +867,114 @@
         return p.category === currentMapFilter;
       });
 
-      filtered.forEach(place => {
+      const countEl = document.getElementById('mapSpotCount');
+      if (countEl) countEl.innerText = filtered.length;
+
+      // Smart proximity offset: gently spread out pins that are very close to each other
+      const coordCounts = {};
+      filtered.forEach((place, index) => {
         const meta = getMetaForPlace(place);
-
-        const customIcon = L.divIcon({
-          className: '',
-          html: `<div class="custom-pin" style="background:${meta.color}; width:32px; height:32px;">
-                   <i class="ph-fill ${meta.icon}"></i>
-                 </div>`,
-          iconSize: [32, 32],
-          iconAnchor: [16, 16],
-          popupAnchor: [0, -16]
-        });
-
-        const lat = parseFloat(place.lat || place.latitude);
-        const lng = parseFloat(place.lng || place.longitude);
-        if (isNaN(lat) || isNaN(lng)) return;
-
-        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(markerLayerGroup);
-
-        const img = place.image || place.foto || fallbackImage;
+        const photoUrl = place.foto || place.image || fallbackImage;
         const placeName = place.nama || place.name;
         const placeKec = place.kecamatan || 'Ciamis';
         const placePrice = place.price || place.harga || 'Gratis';
         const placeHours = place.hours || (place.jam_buka ? `${place.jam_buka} - ${place.jam_tutup}` : 'Setiap Hari');
 
+        // Real Photo Pin Marker HTML
+        const photoPinHtml = `
+          <div class="photo-pin-wrapper" title="${placeName}">
+            <div class="photo-pin-label">${placeName}</div>
+            <div class="photo-pin-body" style="border-color:${meta.color};">
+              <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" alt="${placeName}" class="photo-pin-img" loading="lazy" />
+              <div class="photo-pin-badge" style="background:${meta.color}">
+                <i class="ph-fill ${meta.icon}"></i>
+              </div>
+            </div>
+            <div class="photo-pin-tip" style="border-top-color:${meta.color}"></div>
+          </div>
+        `;
+
+        const customIcon = L.divIcon({
+          className: 'custom-photo-marker',
+          html: photoPinHtml,
+          iconSize: [38, 45],
+          iconAnchor: [19, 44],
+          popupAnchor: [0, -46]
+        });
+
+        let lat = parseFloat(place.lat || place.latitude);
+        let lng = parseFloat(place.lng || place.longitude);
+        if (isNaN(lat) || isNaN(lng)) return;
+
+        // Proximity key rounded to ~30 meters
+        const coordKey = `${lat.toFixed(4)}_${lng.toFixed(4)}`;
+        if (coordCounts[coordKey]) {
+          const step = coordCounts[coordKey];
+          const angle = (step * 72) * (Math.PI / 180);
+          const radius = 0.00035 * Math.ceil(step / 5);
+          lat += radius * Math.cos(angle);
+          lng += (radius * 1.2) * Math.sin(angle);
+          coordCounts[coordKey]++;
+        } else {
+          coordCounts[coordKey] = 1;
+        }
+
+        const marker = L.marker([lat, lng], { icon: customIcon }).addTo(markerLayerGroup);
+
         const popupContent = `
-          <div style="font-family: 'Plus Jakarta Sans', sans-serif; width: 200px;">
-            <img src="${img}" onerror="this.src='${fallbackImage}'" style="width:100%; height:92px; object-fit:cover; border-radius:10px; margin-bottom:6px;">
-            <span style="font-size:9px; font-weight:800; color:${meta.color}; text-transform:uppercase;">${meta.label} • Kec. ${placeKec}</span>
-            <b style="font-size:12px; display:block; color:#0f172a; margin:2px 0; line-height:1.3">${placeName}</b>
-            <div style="font-size:10px; color:#64748b; margin-bottom:4px">⏰ ${placeHours}</div>
-            ${place.wifi ? '<div style="font-size:10px; color:#0284c7; margin-bottom:4px">📶 WiFi Tersedia</div>' : ''}
-            <span style="font-size:11px; font-weight:700; color:#10b981; display:block; margin-bottom:8px;">🎟️ ${placePrice}</span>
-            <button onclick="openModal(${place.id})" style="background:#059669; color:white; border:none; padding:7px 10px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:4px">
-              Detail & Rute Maps →
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; width: 230px;">
+            <div style="position:relative; width:100%; height:115px; border-radius:12px; overflow:hidden; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+              <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" style="width:100%; height:100%; object-fit:cover;">
+              <span style="position:absolute; top:6px; left:6px; font-size:9px; font-weight:800; background:rgba(15,23,42,0.85); color:#ffffff; padding:2px 8px; border-radius:6px; text-transform:uppercase; backdrop-filter:blur(4px);">
+                ${meta.label}
+              </span>
+              <span style="position:absolute; bottom:6px; right:6px; font-size:10px; font-weight:800; background:#10b981; color:#ffffff; padding:2px 7px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+                ★ ${place.rating || 4.8}
+              </span>
+            </div>
+            <div style="font-size:10px; font-weight:700; color:${meta.color}; margin-bottom:2px;">
+              📍 Kec. ${placeKec}
+            </div>
+            <div style="font-size:13px; font-weight:800; color:#0f172a; margin-bottom:4px; line-height:1.3;">
+              ${placeName}
+            </div>
+            <div style="font-size:10px; color:#64748b; margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+              🕒 <span>${placeHours}</span>
+            </div>
+            ${place.wifi ? '<div style="font-size:10px; color:#0284c7; font-weight:600; margin-bottom:4px;">📶 WiFi Tersedia</div>' : ''}
+            <div style="font-size:11px; font-weight:800; color:#10b981; margin-bottom:8px;">
+              🏷️ ${placePrice}
+            </div>
+            <button onclick="openModal(${place.id})" style="background:#9e0b84; color:#ffffff; border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(5,150,105,0.3);">
+              Detail Lengkap & Rute ➜
             </button>
           </div>
         `;
-        marker.bindPopup(popupContent);
+        marker.bindPopup(popupContent, {
+          autoPan: true,
+          autoPanPadding: [30, 30],
+          closeButton: true,
+          maxWidth: 260
+        });
       });
+    }
+
+    function flyToSpot(lat, lng, zoom, name) {
+      if (!mapInstance) return;
+      mapInstance.flyTo([lat, lng], zoom, { duration: 1.4, easeLinearity: 0.25 });
+      if (markerLayerGroup) {
+        markerLayerGroup.eachLayer(layer => {
+          const ll = layer.getLatLng();
+          if (Math.abs(ll.lat - lat) < 0.003 && Math.abs(ll.lng - lng) < 0.003) {
+            setTimeout(() => layer.openPopup(), 1100);
+          }
+        });
+      }
+    }
+
+    function resetMapView() {
+      if (!mapInstance) return;
+      mapInstance.flyTo([-7.3258, 108.3532], 12, { duration: 1.2 });
     }
 
     function filterMapMarkers(cat) {

@@ -5,12 +5,9 @@ function navActive($pages, $current) {
 }
 ?>
 <aside class="admin-sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-logo">🗺️</div>
-    <div>
-      <div class="sidebar-brand-name">UlinKa<span>Ciamis</span></div>
-      <div class="sidebar-brand-sub">Admin Panel</div>
-    </div>
+    <div class="sidebar-brand" style="display:flex;align-items:center;gap:10px;padding:16px 20px;">
+    <img src="/ulinkaciamis/public/images/ulinkaCiamis_cropped.webp" alt="UlinKa Ciamis" style="height:34px;width:auto;object-fit:contain;" />
+  </div>
   </div>
 
   <nav class="sidebar-nav">
