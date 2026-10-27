@@ -238,18 +238,21 @@
       position: relative;
       border-radius: 1.5rem;
       overflow: hidden;
-      box-shadow: 0 20px 35px -10px rgba(74, 5, 63, 0.35);
+      box-shadow: 0 15px 30px -10px rgba(74, 5, 63, 0.3);
       background: #1e021a;
-      min-height: 440px;
+      height: 240px;
+      min-height: 240px;
     }
     @media (min-width: 640px) {
       .hero-carousel-container {
-        min-height: 420px;
+        height: 260px;
+        min-height: 260px;
       }
     }
     @media (min-width: 1024px) {
       .hero-carousel-container {
-        min-height: 440px;
+        height: 275px;
+        min-height: 275px;
       }
     }
 
@@ -388,30 +391,16 @@
           <img src="/ulinkaciamis/assets/images/hero_alun_alun_aerial.jpg" alt="Alun-Alun Ciamis Panorama" class="hero-slide-bg" />
           <div class="hero-gradient-overlay"></div>
           
-          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
-            <div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-white/20 shadow-sm">
-                <i class="ph-fill ph-sparkle text-amber-300"></i> Direktori Resmi Tatar Galuh
-              </span>
-              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
-                Eksplorasi Wisata, Sejarah Galuh, Kuliner &amp; Fasilitas di Ciamis
-              </h2>
-              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
-                Dari segarnya aliran sungai Gunung Sawal, jejak Kerajaan Sunda Galuh, kuliner legendaris, spot WFC tenang, hingga fasilitas publik lengkap di pusat kota.
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2.5 pt-2">
-              <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-[#9e0b84] font-bold text-xs sm:text-sm shadow-lg hover:bg-fuchsia-50 transition flex items-center gap-2">
-                <i class="ph-bold ph-magnifying-glass"></i> Mulai Eksplorasi
-              </button>
-              <button onclick="quickJumpMood('gratis-murah')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
-                <i class="ph-bold ph-ticket"></i> Wisata Gratis &amp; Hemat
-              </button>
-              <button onclick="focusToLandmark(-7.326694, 108.353192, 'Alun-Alun Ciamis')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-white font-medium text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/15">
-                <i class="ph-bold ph-map-pin"></i> Buka Titik di Peta
-              </button>
-            </div>
+          <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-white/20 backdrop-blur-md text-pink-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-white/20 shadow-sm">
+              <i class="ph-fill ph-sparkle text-amber-300"></i> Direktori Resmi Tatar Galuh
+            </span>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+              Eksplorasi Wisata, Sejarah Galuh, Kuliner &amp; Fasilitas di Ciamis
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
+              Dari segarnya aliran sungai Gunung Sawal, jejak Kerajaan Sunda Galuh, kuliner legendaris, spot WFC tenang, hingga fasilitas publik lengkap di pusat kota.
+            </p>
           </div>
         </div>
 
@@ -420,27 +409,16 @@
           <img src="/ulinkaciamis/assets/images/hero_jembatan_cirahong.jpg" alt="Jembatan Kereta Api Cirahong" class="hero-slide-bg" />
           <div class="hero-gradient-overlay"></div>
           
-          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
-            <div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/25 backdrop-blur-md text-amber-200 text-xs font-semibold rounded-full mb-3 border border-amber-400/30 shadow-sm">
-                <i class="ph-fill ph-train text-amber-300"></i> Warisan Sejarah &amp; Ikon Heritage Ciamis
-              </span>
-              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
-                Jembatan Cirahong — Saksi Bisu Kejayaan Kereta Api Lembah Galuh
-              </h2>
-              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
-                Mahakarya arsitektur jembatan baja ganda peninggalan tahun 1893 di Tatar Galuh yang melintasi lembah Sungai Citanduy dengan panorama spektakuler.
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2.5 pt-2">
-              <button onclick="focusToLandmark(-7.3512, 108.3245, 'Jembatan Cirahong')" class="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
-                <i class="ph-bold ph-map-pin"></i> Lihat Titik Cirahong di Peta
-              </button>
-              <button onclick="quickJumpCategory('sejarah')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
-                <i class="ph-bold ph-castle-turret"></i> Koleksi Situs Sejarah
-              </button>
-            </div>
+          <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-amber-500/25 backdrop-blur-md text-amber-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-amber-400/30 shadow-sm">
+              <i class="ph-fill ph-train text-amber-300"></i> Warisan Sejarah &amp; Ikon Heritage Ciamis
+            </span>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+              Jembatan Cirahong — Saksi Bisu Kejayaan Kereta Api Lembah Galuh
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
+              Mahakarya arsitektur jembatan baja ganda peninggalan tahun 1893 di Tatar Galuh yang melintasi lembah Sungai Citanduy dengan panorama spektakuler.
+            </p>
           </div>
         </div>
 
@@ -449,27 +427,16 @@
           <img src="/ulinkaciamis/assets/images/hero_sungai_cireong.png" alt="Sungai Cireong & Cadas Ngampar Ciamis" class="hero-slide-bg" />
           <div class="hero-gradient-overlay"></div>
           
-          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
-            <div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/25 backdrop-blur-md text-emerald-200 text-xs font-semibold rounded-full mb-3 border border-emerald-400/30 shadow-sm">
-                <i class="ph-fill ph-drop text-cyan-300"></i> Kesejukan Lereng Gunung Sawal
-              </span>
-              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
-                Segarnya Ngarai Alami Sungai Cireong &amp; Bebatuan Cadas Ngampar
-              </h2>
-              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
-                Berenang di jernihnya air sungai pegunungan berpadu formasi bebatuan eksotis, udara sejuk khas pedesaan Sunda yang tenang untuk liburan keluarga dan healing.
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2.5 pt-2">
-              <button onclick="quickJumpCategory('curug')" class="px-5 py-3 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
-                <i class="ph-bold ph-drop"></i> Eksplor Curug &amp; Wisata Sungai
-              </button>
-              <button onclick="focusToLandmark(-7.2680, 108.2450, 'Sungai Cireong')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
-                <i class="ph-bold ph-compass"></i> Buka Lokasi di Peta
-              </button>
-            </div>
+          <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-emerald-500/25 backdrop-blur-md text-emerald-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-emerald-400/30 shadow-sm">
+              <i class="ph-fill ph-drop text-cyan-300"></i> Kesejukan Lereng Gunung Sawal
+            </span>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+              Segarnya Ngarai Alami Sungai Cireong &amp; Bebatuan Cadas Ngampar
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
+              Berenang di jernihnya air sungai pegunungan berpadu formasi bebatuan eksotis, udara sejuk khas pedesaan Sunda yang tenang untuk liburan keluarga dan healing.
+            </p>
           </div>
         </div>
 
@@ -478,40 +445,29 @@
           <img src="/ulinkaciamis/assets/images/hero_alun_alun_monumen.jpg" alt="Taman Monumen Ciamis Mantap" class="hero-slide-bg" />
           <div class="hero-gradient-overlay"></div>
           
-          <div class="relative z-10 h-full p-6 sm:p-10 flex flex-col justify-between max-w-2xl">
-            <div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-fuchsia-500/25 backdrop-blur-md text-pink-200 text-xs font-semibold rounded-full mb-3 border border-pink-400/30 shadow-sm">
-                <i class="ph-fill ph-flower text-amber-300"></i> Mahayunan Ayuna Kadatuan
-              </span>
-              <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
-                Pusat Rekreasi Budaya, Taman Kota, &amp; Ragam Kuliner Tradisi Ciamis
-              </h2>
-              <p class="text-xs sm:text-sm text-slate-100 mb-6 leading-relaxed max-w-xl drop-shadow">
-                Singgah di ruang publik hijau terbuka, nikmati gemerlap kuliner malam khas Tatar Galuh, pusat oleh-oleh Galendo, serta fasilitas publik ramah keluarga.
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2.5 pt-2">
-              <button onclick="quickJumpCategory('kuliner')" class="px-5 py-3 rounded-2xl bg-pink-400 hover:bg-pink-300 text-slate-950 font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
-                <i class="ph-bold ph-fork-knife"></i> Cari Kuliner &amp; Oleh-Oleh
-              </button>
-              <button onclick="quickJumpMood('transit')" class="px-4 py-3 rounded-2xl bg-black/40 hover:bg-black/60 backdrop-blur-md text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5 border border-white/20">
-                <i class="ph-bold ph-car"></i> Titik Singgah Jalur Selatan
-              </button>
-            </div>
+          <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-fuchsia-500/25 backdrop-blur-md text-pink-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-pink-400/30 shadow-sm">
+              <i class="ph-fill ph-flower text-amber-300"></i> Mahayunan Ayuna Kadatuan
+            </span>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+              Pusat Rekreasi Budaya, Taman Kota, &amp; Ragam Kuliner Tradisi Ciamis
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
+              Singgah di ruang publik hijau terbuka, nikmati gemerlap kuliner malam khas Tatar Galuh, pusat oleh-oleh Galendo, serta fasilitas publik ramah keluarga.
+            </p>
           </div>
         </div>
 
         <!-- FLOATING JALUR SELATAN CARD (Upper Right on Desktop) -->
-        <div class="absolute right-8 top-8 z-20 hidden lg:flex flex-col gap-2 bg-slate-950/60 backdrop-blur-md border border-white/20 p-4 rounded-2xl w-64 shadow-2xl">
-          <div class="flex items-center gap-1.5 text-[11px] font-bold text-amber-300 uppercase tracking-wider">
-            <i class="ph-bold ph-compass"></i> Info Singgah Jalur Selatan
+        <div class="absolute right-6 top-6 z-20 hidden lg:flex flex-col gap-1.5 bg-slate-950/60 backdrop-blur-md border border-white/20 p-3.5 rounded-2xl w-60 shadow-xl">
+          <div class="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-300 uppercase tracking-wider">
+            <i class="ph-bold ph-compass"></i> Singgah Jalur Selatan
           </div>
-          <p class="text-xs text-slate-200 leading-relaxed">
-            Melintas Bandung/Tasik menuju Pangandaran? Mampir 30–60 menit ke kuliner, situs Galuh, &amp; oleh-oleh Ciamis!
+          <p class="text-[11px] text-slate-200 leading-snug">
+            Melintas ke Pangandaran? Mampir 30–60 mnt ke kuliner, situs Galuh, &amp; Galendo!
           </p>
-          <button onclick="quickJumpMood('transit')" class="mt-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[11px] rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
-            <i class="ph-bold ph-car"></i> Lihat Spot Singgah Cepat
+          <button onclick="quickJumpMood('transit')" class="mt-0.5 py-1 px-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10.5px] rounded-lg transition flex items-center justify-center gap-1 shadow-sm">
+            <i class="ph-bold ph-car"></i> Spot Singgah Cepat
           </button>
         </div>
 
@@ -524,7 +480,7 @@
         </button>
 
         <!-- BOTTOM CONTROLS & LOCATION BADGE -->
-        <div class="absolute bottom-4 left-6 right-6 sm:bottom-6 sm:left-10 sm:right-10 z-20 flex items-center justify-between pointer-events-none">
+        <div class="absolute bottom-3.5 left-6 right-6 sm:bottom-4 sm:left-10 sm:right-10 z-20 flex items-center justify-between pointer-events-none">
           <!-- Dot Indicators -->
           <div class="flex items-center gap-2 pointer-events-auto">
             <button onclick="goToHeroSlide(0)" class="hero-dot-indicator active w-8" data-dot="0" aria-label="Slide 1"></button>
