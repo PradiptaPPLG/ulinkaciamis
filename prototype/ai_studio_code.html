@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciamisku - Eksplorasi Tatar Galuh Ciamis</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet.js untuk Peta Interaktif -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .leaflet-pane { z-index: 10 !important; }
+    .leaflet-top, .leaflet-bottom { z-index: 11 !important; }
+    .custom-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.28);
+      color: #ffffff;
+      font-size: 15px;
+      transition: transform 0.2s ease;
+    }
+    .custom-pin:hover {
+      transform: scale(1.18);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased pb-24 md:pb-12">
+
+  <!-- ================= TOP NAVIGATION ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('beranda')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <i class="ph-bold ph-compass text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold bg-gradient-to-r from-emerald-700 to-teal-500 bg-clip-text text-transparent leading-none">Ciamisku</h1>
+          <span class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Jelajah Tatar Galuh</span>
+        </div>
+      </div>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
+        <button onclick="switchTab('beranda')" class="desktop-tab-btn bg-white text-emerald-700 shadow-sm px-4 py-2 rounded-xl text-xs font-bold transition duration-200" data-target="beranda">
+          <i class="ph-bold ph-house mr-1 text-sm"></i> Beranda
+        </button>
+        <button onclick="switchTab('eksplor')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="eksplor">
+          <i class="ph-bold ph-magnifying-glass mr-1 text-sm"></i> Eksplor (<span id="navTotalCount">0</span>)
+        </button>
+        <button onclick="switchTab('favorit')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="favorit">
+          <i class="ph-bold ph-heart mr-1 text-sm"></i> Tersimpan (<span class="fav-count">0</span>)
+        </button>
+        <button onclick="switchTab('akun')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="akun">
+          <i class="ph-bold ph-user mr-1 text-sm"></i> Kontribusi Warga
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openAddPlaceModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition">
+          <i class="ph-bold ph-plus-circle text-sm"></i> Tambah Spot
+        </button>
+        <button onclick="switchTab('favorit')" class="md:hidden relative w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+          <i class="ph-bold ph-heart text-lg"></i>
+          <span class="fav-badge absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= TAB 1: BERANDA ================= -->
+  <div id="tab-beranda" class="tab-content block">
+    <!-- Hero Section -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-3">
+      <div class="relative bg-gradient-to-br from-emerald-800 via-teal-800 to-slate-900 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-xl shadow-emerald-950/15">
+        <div class="absolute -right-8 -bottom-8 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-12 top-6 hidden lg:flex flex-col gap-2 bg-white/10 backdrop-blur-md border border-white/15 p-4 rounded-2xl w-64">
+          <span class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">Info Singgah Jalur Selatan</span>
+          <p class="text-xs text-slate-100 leading-relaxed">Melintas dari arah Bandung/Tasik menuju Pangandaran? Mampir 30–60 menit ke kuliner, situs Galuh, & pusat oleh-oleh Ciamis!</p>
+          <button onclick="quickJumpMood('transit')" class="mt-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold text-[11px] rounded-xl transition flex items-center justify-center gap-1">
+            <i class="ph-bold ph-car"></i> Lihat Spot Singgah Cepat
+          </button>
+        </div>
+
+        <div class="max-w-xl relative z-10">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 backdrop-blur-md text-emerald-200 text-xs font-semibold rounded-full mb-3">
+            <i class="ph-fill ph-sparkle text-amber-400"></i> Direktori Resmi & Panduan Tatar Galuh
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight mb-2">
+            Eksplorasi Wisata, Sejarah Galuh, Kuliner & Cafe di Ciamis
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-200 mb-5 leading-relaxed">
+            Dari segarnya aliran sungai Gunung Sawal, jejak Kerajaan Sunda Galuh, kuliner legendaris, hingga spot WFC tenang di pusat kota.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button onclick="switchTab('eksplor')" class="px-5 py-3 rounded-2xl bg-white text-emerald-900 font-bold text-xs sm:text-sm shadow-md hover:bg-emerald-50 transition flex items-center gap-2">
+              <i class="ph-bold ph-magnifying-glass"></i> Mulai Eksplorasi
+            </button>
+            <button onclick="quickJumpMood('gratis-murah')" class="px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold text-xs sm:text-sm transition flex items-center gap-1.5">
+              <i class="ph-bold ph-ticket"></i> Wisata Gratis & Hemat
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AKSES CEPAT KATEGORI BERANDA -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-2">
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+        <button onclick="quickJumpCategory('curug')" class="bg-white hover:border-blue-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-drop"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Curug & Sungai</span>
+        </button>
+        <button onclick="quickJumpCategory('alam')" class="bg-white hover:border-teal-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-mountains"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Wisata Alam</span>
+        </button>
+        <button onclick="quickJumpCategory('sejarah')" class="bg-white hover:border-violet-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-bank"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Sejarah Galuh</span>
+        </button>
+        <button onclick="quickJumpCategory('kuliner')" class="bg-white hover:border-orange-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-bowl-food"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Kuliner & UMKM</span>
+        </button>
+        <button onclick="quickJumpCategory('cafe')" class="bg-white hover:border-amber-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-coffee"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Cafe & WFC</span>
+        </button>
+        <button onclick="quickJumpCategory('publik')" class="bg-white hover:border-sky-400 border border-slate-200/80 p-3 rounded-2xl flex flex-col items-center gap-1.5 shadow-sm transition group">
+          <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl group-hover:scale-110 transition">
+            <i class="ph-fill ph-park"></i>
+          </div>
+          <span class="text-[11px] font-bold text-slate-700 text-center">Taman & Kota</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PETA DAERAH CIAMIS (INTERAKTIF DENGAN FILTER PIN) -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+      <div class="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+              <i class="ph-fill ph-map-pin text-emerald-600 text-xl"></i> Peta Interaktif Sebaran Destinasi Ciamis
+            </h3>
+            <p class="text-xs text-slate-500">Klik filter kategori di kanan untuk menyaring pin peta, atau klik pin untuk detail lokasi.</p>
+          </div>
+          
+          <!-- Filter Pin Peta Langsung -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+            <button onclick="filterMapMarkers('all')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-900 text-white whitespace-nowrap transition" data-mapcat="all">
+              Semua Pin
+            </button>
+            <button onclick="filterMapMarkers('curug')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-blue-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="curug">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Curug
+            </button>
+            <button onclick="filterMapMarkers('alam')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-teal-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="alam">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-500 inline-block"></span> Alam
+            </button>
+            <button onclick="filterMapMarkers('sejarah')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-violet-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="sejarah">
+              <span class="w-2.5 h-2.5 rounded-full bg-violet-600 inline-block"></span> Sejarah
+            </button>
+            <button onclick="filterMapMarkers('kuliner')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-orange-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="kuliner">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Kuliner
+            </button>
+            <button onclick="filterMapMarkers('cafe')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-amber-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="cafe">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Cafe
+            </button>
+            <button onclick="filterMapMarkers('publik')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-sky-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="publik">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span> Taman
+            </button>
+          </div>
+        </div>
+
+        <!-- Wadah Map Leaflet -->
+        <div id="ciamisMap" class="w-full h-80 sm:h-[420px] rounded-2xl border border-slate-200 shadow-inner z-10"></div>
+      </div>
+    </section>
+
+    <!-- SPOT REKOMENDASI POPULER -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-slate-800">Ikonik & Paling Banyak Dicari di Ciamis</h3>
+          <p class="text-xs text-slate-500">Rekomendasi unggulan lintas kategori minggu ini</p>
+        </div>
+        <button onclick="switchTab('eksplor')" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+          Lihat Semua Destinasi <i class="ph-bold ph-arrow-right"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="homeHighlightGrid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= TAB 2: EKSPLOR TEMPAT ================= -->
+  <div id="tab-eksplor" class="tab-content hidden">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
+      <div class="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm mb-4">
+        <!-- Search & Filter Kecamatan -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div class="relative md:col-span-2">
+            <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Cari 'Cadas Ngampar', 'Galendo', 'Astana Gede', 'WiFi'..." 
+              class="w-full pl-12 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
+              oninput="handleSearch()"
+            >
+          </div>
+          <div class="relative">
+            <i class="ph-bold ph-map-trifold absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 text-lg"></i>
+            <select 
+              id="kecamatanSelect" 
+              onchange="handleKecamatanFilter()"
+              class="w-full pl-11 pr-8 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition appearance-none cursor-pointer"
+            >
+              <option value="all">Semua Kecamatan</option>
+              <!-- Diisi dinamis via JS -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Filter Kebutuhan / Mood -->
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="ph-fill ph-sparkle text-amber-500"></i> Kebutuhan Khusus / Suasana (Mood):
+          </label>
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button onclick="setMoodFilter('all')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-900 text-white border-slate-900 transition" data-mood="all">
+              Semua Mood
+            </button>
+            <button onclick="setMoodFilter('transit')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="transit">
+              🚗 Singgah Jalur Nasional
+            </button>
+            <button onclick="setMoodFilter('belajar')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="belajar">
+              💻 Nugas & WFC Tenang
+            </button>
+            <button onclick="setMoodFilter('air-jernih')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="air-jernih">
+              🌊 Main Air & Sungai Jernih
+            </button>
+            <button onclick="setMoodFilter('sejarah-budaya')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="sejarah-budaya">
+              🏛️ Napak Tilas & Ziarah Galuh
+            </button>
+            <button onclick="setMoodFilter('kuliner-malam')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="kuliner-malam">
+              🍜 Kuliner & Oleh-Oleh Khas
+            </button>
+            <button onclick="setMoodFilter('sunset')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="sunset">
+              🌅 Kabut Pagi & View Tinggi
+            </button>
+            <button onclick="setMoodFilter('keluarga')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="keluarga">
+              👨‍👩‍👧‍👦 Ramah Anak & Botram
+            </button>
+            <button onclick="setMoodFilter('gratis-murah')" class="mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition" data-mood="gratis-murah">
+              💸 Gratis / Ramah Kantong
+            </button>
+          </div>
+        </div>
+
+        <!-- Kategori Tempat (7 Pilihan) -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori Destinasi:</label>
+            <button onclick="resetAllFilters()" class="text-[11px] font-bold text-emerald-600 hover:underline">Reset Filter</button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            <button onclick="setCategoryFilter('all')" class="cat-card p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-500 text-emerald-800 font-bold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="all">
+              <i class="ph-bold ph-squares-four text-lg"></i>
+              <span class="text-[11px]">Semua</span>
+            </button>
+            <button onclick="setCategoryFilter('curug')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="curug">
+              <i class="ph-bold ph-drop text-lg text-blue-500"></i>
+              <span class="text-[11px] truncate w-full text-center">Curug/Sungai</span>
+            </button>
+            <button onclick="setCategoryFilter('alam')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="alam">
+              <i class="ph-bold ph-mountains text-lg text-teal-500"></i>
+              <span class="text-[11px] truncate w-full text-center">Wisata Alam</span>
+            </button>
+            <button onclick="setCategoryFilter('sejarah')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="sejarah">
+              <i class="ph-bold ph-bank text-lg text-violet-600"></i>
+              <span class="text-[11px] truncate w-full text-center">Sejarah Galuh</span>
+            </button>
+            <button onclick="setCategoryFilter('kuliner')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="kuliner">
+              <i class="ph-bold ph-bowl-food text-lg text-orange-500"></i>
+              <span class="text-[11px] truncate w-full text-center">Kuliner/UMKM</span>
+            </button>
+            <button onclick="setCategoryFilter('cafe')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="cafe">
+              <i class="ph-bold ph-coffee text-lg text-amber-500"></i>
+              <span class="text-[11px] truncate w-full text-center">Cafe & WFC</span>
+            </button>
+            <button onclick="setCategoryFilter('publik')" class="cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition" data-cat="publik">
+              <i class="ph-bold ph-park text-lg text-sky-500"></i>
+              <span class="text-[11px] truncate w-full text-center">Taman Kota</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hasil Grid Destinasi -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-2">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-slate-800" id="resultTitle">Daftar Destinasi Ciamis</h3>
+          <p class="text-xs text-slate-500" id="resultCount">Memuat data destinasi...</p>
+        </div>
+      </div>
+
+      <div id="destinationsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Render via JS -->
+      </div>
+
+      <!-- State Kosong -->
+      <div id="emptyState" class="hidden text-center py-14 bg-white rounded-3xl border border-slate-200">
+        <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+          <i class="ph-bold ph-magnifying-glass"></i>
+        </div>
+        <h4 class="text-base font-bold text-slate-700">Tidak ada tempat yang cocok</h4>
+        <p class="text-xs text-slate-400 mt-1 mb-4">Coba ganti kata kunci, pilih kecamatan lain, atau reset filter mood kamu.</p>
+        <button onclick="resetAllFilters()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition">
+          Tampilkan Semua Destinasi
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= TAB 3: FAVORIT ================= -->
+  <div id="tab-favorit" class="tab-content hidden max-w-6xl mx-auto px-4 sm:px-6 py-6">
+    <div class="mb-5">
+      <h2 class="text-2xl font-extrabold text-slate-800">Rencana Kunjungan Tersimpan</h2>
+      <p class="text-xs text-slate-500">Daftar destinasi, kuliner, atau tempat nugas favorit pilihanmu di Ciamis.</p>
+    </div>
+
+    <div id="favoritesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+    <div id="favoriteEmptyState" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200">
+      <div class="w-16 h-16 bg-rose-50 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+        <i class="ph-bold ph-heart"></i>
+      </div>
+      <h4 class="text-base font-bold text-slate-700">Belum ada tempat disimpan</h4>
+      <p class="text-xs text-slate-400 mt-1 mb-4">Tekan ikon hati pada kartu destinasi untuk menyusun daftar kunjunganmu.</p>
+      <button onclick="switchTab('eksplor')" class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition">
+        Eksplor Ciamis Sekarang
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= TAB 4: AKUN & KONTRIBUSI WARGA ================= -->
+  <div id="tab-akun" class="tab-content hidden max-w-2xl mx-auto px-4 sm:px-6 py-6">
+    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm mb-4">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white flex items-center justify-center text-2xl font-extrabold shadow-md shadow-emerald-500/20">
+          TG
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-slate-800">Warga Tatar Galuh</h3>
+          <p class="text-xs text-slate-400">Kontributor Direktori Wisata & UMKM Lokal Ciamis</p>
+          <span class="inline-block mt-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+            Kabupaten Ciamis, Jawa Barat
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistik Ringkas Database -->
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+          <span class="block text-xl font-extrabold text-emerald-700" id="statTotalPlaces">0</span>
+          <span class="text-[11px] text-slate-500 font-medium">Total Spot</span>
+        </div>
+        <div class="bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+          <span class="block text-xl font-extrabold text-teal-600">6</span>
+          <span class="text-[11px] text-slate-500 font-medium">Kategori Lokal</span>
+        </div>
+        <div class="bg-slate-50 border border-slate-100 p-3 rounded-2xl text-center">
+          <span class="block text-xl font-extrabold text-rose-500 fav-count">0</span>
+          <span class="text-[11px] text-slate-500 font-medium">Disimpan</span>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-4 space-y-2">
+        <button onclick="openAddPlaceModal()" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50/70 hover:bg-emerald-100/70 text-emerald-900 text-xs font-bold transition">
+          <span class="flex items-center gap-3"><i class="ph-bold ph-plus-circle text-emerald-600 text-lg"></i> Daftarkan Wisata Desa / UMKM / Cafe Baru</span>
+          <i class="ph-bold ph-caret-right text-emerald-600"></i>
+        </button>
+        <button onclick="resetCustomPlaces()" class="w-full flex items-center justify-between p-3.5 rounded-2xl hover:bg-slate-50 text-slate-600 text-xs font-semibold transition">
+          <span class="flex items-center gap-3"><i class="ph-bold ph-arrows-counter-clockwise text-amber-600 text-lg"></i> Reset Data Tambahan Warga (Default)</span>
+          <i class="ph-bold ph-caret-right text-slate-400"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DETAIL DESTINASI ================= -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="relative h-56 w-full bg-slate-200">
+        <img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+        <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-slate-700 hover:bg-white shadow">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+        <span id="modalCategory" class="absolute bottom-4 left-4 px-3 py-1 bg-emerald-600/95 backdrop-blur text-white text-xs font-bold rounded-full shadow"></span>
+      </div>
+      <div class="p-5 overflow-y-auto">
+        <div class="flex justify-between items-start gap-2 mb-1.5">
+          <h3 id="modalTitle" class="text-xl font-extrabold text-slate-800"></h3>
+          <div class="flex items-center gap-1 text-amber-500 font-bold text-sm bg-amber-50 px-2.5 py-1 rounded-xl shrink-0">
+            <i class="ph-fill ph-star"></i>
+            <span id="modalRating"></span>
+          </div>
+        </div>
+        <p id="modalLocation" class="text-xs text-slate-500 font-medium flex items-center gap-1.5 mb-4">
+          <i class="ph-fill ph-map-pin text-emerald-600 text-sm"></i> <span></span>
+        </p>
+
+        <!-- Info Jam Buka & Estimasi Biaya -->
+        <div class="grid grid-cols-2 gap-2.5 mb-4">
+          <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-2xl flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <i class="ph-bold ph-ticket"></i>
+            </div>
+            <div>
+              <span class="block text-[10px] text-slate-400 font-bold uppercase">Tiket / Kisaran</span>
+              <span id="modalPrice" class="text-xs font-bold text-slate-700"></span>
+            </div>
+          </div>
+          <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-2xl flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+              <i class="ph-bold ph-clock"></i>
+            </div>
+            <div>
+              <span class="block text-[10px] text-slate-400 font-bold uppercase">Jam Operasional</span>
+              <span id="modalHours" class="text-xs font-bold text-slate-700"></span>
+            </div>
+          </div>
+        </div>
+
+        <p id="modalDesc" class="text-sm text-slate-600 mb-4 leading-relaxed"></p>
+
+        <!-- Fasilitas Highlight -->
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Daya Tarik & Fasilitas Utama</h4>
+        <div id="modalFeatures" class="flex flex-wrap gap-1.5 mb-6"></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button id="modalFocusMapBtn" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl flex items-center justify-center gap-2 text-xs transition">
+            <i class="ph-bold ph-map-trifold text-emerald-600 text-base"></i> Sorot di Peta Ciamis
+          </button>
+          <a id="modalMapsLink" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 text-xs shadow-lg shadow-emerald-600/25 transition">
+            <i class="ph-bold ph-navigation-arrow text-base"></i> Rute Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL TAMBAH TEMPAT WARGA ================= -->
+  <div id="addPlaceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-800">Usulkan Spot Baru Ciamis</h3>
+          <p class="text-xs text-slate-400">Bantu promosikan potensi desa, UMKM, atau cafe lokal</p>
+        </div>
+        <button onclick="closeAddPlaceModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitNewPlace(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Nama Tempat / UMKM</label>
+          <input type="text" id="newName" required placeholder="Contoh: Kopi Lembah Gunung Sawal" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Kategori</label>
+            <select id="newCategory" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold">
+              <option value="curug">Curug & Sungai</option>
+              <option value="alam">Wisata Alam</option>
+              <option value="sejarah">Sejarah Galuh</option>
+              <option value="kuliner">Kuliner & UMKM</option>
+              <option value="cafe">Cafe & WFC</option>
+              <option value="publik">Taman & Kota</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Kecamatan</label>
+            <input type="text" id="newKecamatan" required placeholder="Contoh: Sadananya" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Kisaran Biaya / HTM</label>
+            <input type="text" id="newPrice" required placeholder="Gratis / Rp 10.000" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Jam Buka</label>
+            <input type="text" id="newHours" required placeholder="08.00 - 21.00 WIB" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat</label>
+          <textarea id="newDesc" rows="2" required placeholder="Ceritakan daya tarik utama tempat ini..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-emerald-500"></textarea>
+        </div>
+        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs shadow-md transition">
+          Simpan & Tampilkan di Peta Ciamis
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE BOTTOM NAVIGATION ================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2 flex justify-around items-center">
+    <button onclick="switchTab('beranda')" class="mobile-nav-btn flex flex-col items-center gap-1 text-emerald-600 font-bold text-[11px]" data-target="beranda">
+      <i class="ph-fill ph-house text-2xl"></i>
+      <span>Beranda</span>
+    </button>
+    <button onclick="switchTab('eksplor')" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400 font-medium text-[11px]" data-target="eksplor">
+      <i class="ph-bold ph-compass text-2xl"></i>
+      <span>Eksplor</span>
+    </button>
+    <button onclick="switchTab('favorit')" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400 font-medium text-[11px] relative" data-target="favorit">
+      <i class="ph-bold ph-heart text-2xl"></i>
+      <span class="fav-badge absolute top-0 right-3 w-4 h-4 bg-rose-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold hidden">0</span>
+      <span>Favorit</span>
+    </button>
+    <button onclick="switchTab('akun')" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400 font-medium text-[11px]" data-target="akun">
+      <i class="ph-bold ph-user text-2xl"></i>
+      <span>Warga</span>
+    </button>
+  </nav>
+
+  <!-- ================= LOGIKA JAVASCRIPT & DATA ASLI CIAMIS ================= -->
+  <script>
+    // Konfigurasi Visual Kategori (Warna Pin Peta & Badge)
+    const categoryMeta = {
+      curug:   { label: "Curug & Sungai", color: "#3b82f6", icon: "ph-drop", badgeBg: "bg-blue-50 text-blue-700" },
+      alam:    { label: "Wisata Alam", color: "#14b8a6", icon: "ph-mountains", badgeBg: "bg-teal-50 text-teal-700" },
+      sejarah: { label: "Sejarah Galuh", color: "#7c3aed", icon: "ph-bank", badgeBg: "bg-violet-50 text-violet-700" },
+      kuliner: { label: "Kuliner & UMKM", color: "#f97316", icon: "ph-bowl-food", badgeBg: "bg-orange-50 text-orange-700" },
+      cafe:    { label: "Cafe & WFC", color: "#f59e0b", icon: "ph-coffee", badgeBg: "bg-amber-50 text-amber-700" },
+      publik:  { label: "Taman & Kota", color: "#0ea5e9", icon: "ph-park", badgeBg: "bg-sky-50 text-sky-700" }
+    };
+
+    const fallbackImage = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='450' viewBox='0 0 700 450'%3E%3Crect width='700' height='450' fill='%23065f46'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23a7f3d0'%3ETatar Galuh Ciamis%3C/text%3E%3C/svg%3E";
+
+    // Basis Data Asli Kabupaten Ciamis (22 Lokasi Lintas Kecamatan)
+    const defaultDestinations = [
+      // --- KATEGORI 1: CURUG & SUNGAI ---
+      {
+        id: 1,
+        name: "Wisata Sungai Cadas Ngampar",
+        category: "curug",
+        categoryName: "Curug & Sungai",
+        kecamatan: "Sadananya",
+        lat: -7.2562,
+        lng: 108.3340,
+        price: "Rp 5.000 - Rp 10.000",
+        hours: "07.30 - 17.00 WIB",
+        image: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=700&auto=format&fit=crop",
+        location: "Desa Gunungsari, Kec. Sadananya",
+        rating: 4.8,
+        featured: true,
+        moods: ["air-jernih", "keluarga", "gratis-murah"],
+        features: ["Air Mata Air Gn. Sawal", "River Tubing Ban", "Gazebo Botram Keluarga"],
+        desc: "Aliran sungai berbatu besar yang sangat jernih dan segar langsung dari kaki Gunung Sawal. Destinasi favorit warga Ciamis untuk berenang santai, river tubing, dan makan liwet bersama keluarga."
+      },
+      {
+        id: 2,
+        name: "Curug Tujuh Cibolang",
+        category: "curug",
+        categoryName: "Curug & Sungai",
+        kecamatan: "Panjalu",
+        lat: -7.1539,
+        lng: 108.2561,
+        price: "Rp 10.000 - Rp 15.000",
+        hours: "08.00 - 17.00 WIB",
+        image: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=700&auto=format&fit=crop",
+        location: "Desa Sandingtaman, Kec. Panjalu",
+        rating: 4.8,
+        featured: false,
+        moods: ["air-jernih", "sunset"],
+        features: ["7 Tingkat Air Terjun", "Hutan Pinus Sejuk", "Spot Camping"],
+        desc: "Air terjun legendaris di Ciamis utara yang memiliki tujuh tingkatan curug berdekatan dengan debit air deras dan udara pegunungan yang dingin menyegarkan."
+      },
+      {
+        id: 3,
+        name: "Curug Panganten Sadananya",
+        category: "curug",
+        categoryName: "Curug & Sungai",
+        kecamatan: "Sadananya",
+        lat: -7.2422,
+        lng: 108.3275,
+        price: "Rp 5.000 - Rp 10.000",
+        hours: "08.00 - 16.30 WIB",
+        image: "https://images.unsplash.com/photo-1511497584788-876760111969?w=700&auto=format&fit=crop",
+        location: "Desa Tanjungsari, Kec. Sadananya",
+        rating: 4.7,
+        featured: false,
+        moods: ["air-jernih"],
+        features: ["Sungai Dingin & Jernih", "Lereng Gunung Sawal", "Trekking Asri"],
+        desc: "Curug eksotis di lereng Gunung Sawal dengan kejernihan air yang luar biasa menyegarkan, cocok untuk trekking ringan dan melepas penat dari rutinitas."
+      },
+      {
+        id: 4,
+        name: "Wisata Alam Sungai Cireong",
+        category: "curug",
+        categoryName: "Curug & Sungai",
+        kecamatan: "Sindangkasih",
+        lat: -7.2745,
+        lng: 108.2258,
+        price: "Rp 10.000",
+        hours: "08.00 - 17.00 WIB",
+        image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=700&auto=format&fit=crop",
+        location: "Desa Sukaresik, Kec. Sindangkasih",
+        rating: 4.7,
+        featured: false,
+        moods: ["air-jernih", "keluarga", "gratis-murah"],
+        features: ["Kolam Alami Tanpa Kaporit", "Aliran Sungai Lebar", "Ramah Anak"],
+        desc: "Perpaduan aliran sungai alami berbatu dan kolam renang mata air pegunungan di wilayah Sindangkasih yang selalu ramai dikunjungi wisatawan lokal maupun luar kota."
+      },
+      {
+        id: 5,
+        name: "Curug Pamipiran",
+        category: "curug",
+        categoryName: "Curug & Sungai",
+        kecamatan: "Banjaranyar",
+        lat: -7.4720,
+        lng: 108.5080,
+        price: "Rp 5.000",
+        hours: "08.00 - 16.30 WIB",
+        image: "https://images.unsplash.com/photo-1546548970-71785318a17b?w=700&auto=format&fit=crop",
+        location: "Desa Cigayam, Kec. Banjaranyar",
+        rating: 4.6,
+        featured: false,
+        moods: ["air-jernih", "gratis-murah"],
+        features: ["Leuwi Hijau Toska", "Tebing Batu Alami", "Suasana Tenang"],
+        desc: "Permata tersembunyi di Ciamis selatan dengan kolam alami berwarna kehijauan yang dikelilingi batuan tebing eksotis."
+      },
+
+      // --- KATEGORI 2: WISATA ALAM ---
+      {
+        id: 6,
+        name: "Situ Lengkong Panjalu",
+        category: "alam",
+        categoryName: "Wisata Alam",
+        kecamatan: "Panjalu",
+        lat: -7.1328,
+        lng: 108.2711,
+        price: "Rp 10.000 - Rp 25.000",
+        hours: "07.00 - 18.00 WIB",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&auto=format&fit=crop",
+        location: "Desa Panjalu, Kec. Panjalu",
+        rating: 4.9,
+        featured: true,
+        moods: ["keluarga", "sejarah-budaya", "sunset"],
+        features: ["Perahu Wisata Danau", "Pulau Nusa Gede", "Museum Bumi Alit"],
+        desc: "Danau ikonik kebanggaan Kabupaten Ciamis dengan cagar alam Pulau Nusa Gede di tengahnya. Memadukan keindahan danau sejuk dengan sejarah Kerajaan Panjalu."
+      },
+      {
+        id: 7,
+        name: "Puncak Bangku Rancah",
+        category: "alam",
+        categoryName: "Wisata Alam",
+        kecamatan: "Rancah",
+        lat: -7.1956,
+        lng: 108.5028,
+        price: "Gratis - Rp 5.000 (Parkir)",
+        hours: "05.00 - 18.00 WIB",
+        image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=700&auto=format&fit=crop",
+        location: "Desa Situmandala, Kec. Rancah",
+        rating: 4.7,
+        featured: false,
+        moods: ["sunset", "gratis-murah"],
+        features: ["Negeri di Atas Awan", "Sunrise Pukul 05.30", "Warung Kopi & Gorengan Hangat"],
+        desc: "Spot populer penikmat lautan kabut tebal di pagi hari yang menyelimuti lembah perbatasan Ciamis, menyuguhkan sensasi bak berada di atas awan."
+      },
+      {
+        id: 8,
+        name: "Hutan Pinus Darmacaang Hill",
+        category: "alam",
+        categoryName: "Wisata Alam",
+        kecamatan: "Cikoneng",
+        lat: -7.2695,
+        lng: 108.2592,
+        price: "Rp 10.000",
+        hours: "08.00 - 17.30 WIB",
+        image: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=700&auto=format&fit=crop",
+        location: "Desa Darmacaang, Kec. Cikoneng",
+        rating: 4.7,
+        featured: false,
+        moods: ["sunset", "keluarga"],
+        features: ["Camping Ground", "Hammock & Spot Foto", "Kedai Kopi Hutan"],
+        desc: "Kawasan hutan pinus menjulang tinggi di lereng Gunung Sawal dengan udara sejuk berkabut, cocok untuk berkemah akhir pekan atau ngopi santai."
+      },
+      {
+        id: 9,
+        name: "Puncak Puspa Medanglayang",
+        category: "alam",
+        categoryName: "Wisata Alam",
+        kecamatan: "Panumbangan",
+        lat: -7.1815,
+        lng: 108.2098,
+        price: "Rp 10.000",
+        hours: "24 Jam (Camping)",
+        image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&auto=format&fit=crop",
+        location: "Desa Medanglayang, Kec. Panumbangan",
+        rating: 4.8,
+        featured: false,
+        moods: ["sunset"],
+        features: ["City Light Malam Hari", "Landasan Paralayang", "Ketinggian 1.000 Mdpl"],
+        desc: "Titik pandang ketinggian di Panumbangan yang menampilkan hamparan lampu kota Ciamis–Tasikmalaya pada malam hari serta panorama pegunungan terbuka."
+      },
+
+      // --- KATEGORI 3: SEJARAH & BUDAYA GALUH (BARU) ---
+      {
+        id: 10,
+        name: "Situs Astana Gede Kawali",
+        category: "sejarah",
+        categoryName: "Sejarah Galuh",
+        kecamatan: "Kawali",
+        lat: -7.1892,
+        lng: 108.3628,
+        price: "Rp 5.000 - Rp 10.000",
+        hours: "08.00 - 16.00 WIB",
+        image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=700&auto=format&fit=crop",
+        location: "Desa Kawali, Kec. Kawali",
+        rating: 4.9,
+        featured: true,
+        moods: ["sejarah-budaya", "keluarga", "gratis-murah"],
+        features: ["6 Prasasti Batu Kawali", "Batu Pangcalikan Raja", "Hutan Lindung Rimbun"],
+        desc: "bekas pusat pemerintahan Kerajaan Sunda Galuh abad ke-14 pada masa Prabu Niskala Wastukancana. Menyimpan prasasti aksara Sunda Kuno dan mata air Cikawali."
+      },
+      {
+        id: 11,
+        name: "Situs Ciung Wanara Karangkamulyan",
+        category: "sejarah",
+        categoryName: "Sejarah Galuh",
+        kecamatan: "Cijeungjing",
+        lat: -7.3478,
+        lng: 108.4815,
+        price: "Rp 10.000",
+        hours: "08.00 - 17.00 WIB",
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=700&auto=format&fit=crop",
+        location: "Jl. Raya Ciamis-Banjar, Kec. Cijeungjing",
+        rating: 4.8,
+        featured: false,
+        moods: ["sejarah-budaya", "transit", "keluarga"],
+        features: ["Tepi Jalan Nasional", "Peninggalan Kerajaan Galuh", "Rest Area Teduh"],
+        desc: "Kawasan cagar budaya dan hutan lindung seluas 25 hektar tepat di tepi jalur utama Ciamis–Banjar/Pangandaran. Sangat pas dijadikan titik singgah sambil menelusuri legenda Ciung Wanara."
+      },
+      {
+        id: 12,
+        name: "Situs Jambansari & Museum Galuh",
+        category: "sejarah",
+        categoryName: "Sejarah Galuh",
+        kecamatan: "Ciamis",
+        lat: -7.3248,
+        lng: 108.3508,
+        price: "Sukarela / Gratis",
+        hours: "08.00 - 16.00 WIB",
+        image: "https://images.unsplash.com/photo-1580137189272-c9379f8864fd?w=700&auto=format&fit=crop",
+        location: "Jl. R.A.A. Kusumahsubrata, Ciamis Kota",
+        rating: 4.8,
+        featured: false,
+        moods: ["sejarah-budaya", "gratis-murah", "transit"],
+        features: ["Jejak Bupati Kanjeng Prebu", "Pusat Kota Ciamis", "Lingkungan Asri & Teduh"],
+        desc: "Kompleks cagar budaya makam Bupati Galuh R.A.A. Kusumadiningrat (Kanjeng Prebu), tokoh besar pembangunan Tatar Galuh abad ke-19, lengkap dengan perpustakaan dan koleksi sejarah."
+      },
+
+      // --- KATEGORI 4: KULINER KHAS & UMKM (BARU) ---
+      {
+        id: 13,
+        name: "Foodcourt Alun-Alun Ciamis",
+        category: "kuliner",
+        categoryName: "Kuliner & UMKM",
+        kecamatan: "Ciamis",
+        lat: -7.3264,
+        lng: 108.3541,
+        price: "Mulai Rp 5.000 - Rp 25.000",
+        hours: "15.00 - 23.30 WIB",
+        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=700&auto=format&fit=crop",
+        location: "Timur Taman Raflesia / Alun-Alun Ciamis",
+        rating: 4.8,
+        featured: true,
+        moods: ["kuliner-malam", "transit", "keluarga", "gratis-murah"],
+        features: ["Ratusan Stand UMKM Lokal", "Dukung QRIS Cashless", "Parkir Terpadu"],
+        desc: "Sentra kuliner malam kebanggaan warga Ciamis hasil penataan kawasan Alun-Alun. Tersedia cilok goang khas Ciamis, mie bakso Priangan, kupat tahu, hingga jajanan kekinian dengan harga bersahabat."
+      },
+      {
+        id: 14,
+        name: "RM Mergosari Khas Sunda",
+        category: "kuliner",
+        categoryName: "Kuliner & UMKM",
+        kecamatan: "Ciamis",
+        lat: -7.3315,
+        lng: 108.3688,
+        price: "Rp 25.000 - Rp 60.000",
+        hours: "08.00 - 21.30 WIB",
+        image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&auto=format&fit=crop",
+        location: "Jl. Jend. Ahmad Yani (Bolenglang), Ciamis",
+        rating: 4.7,
+        featured: false,
+        moods: ["kuliner-malam", "transit", "keluarga"],
+        features: ["Nasi Liwet & Gurame", "Sambal Dadak Khas", "Parkir Luas Bus/Mobil"],
+        desc: "Rumah makan Sunda legendaris di jalur utama Ciamis yang menjadi langganan keluarga dan wisatawan luar kota untuk menikmati olahan ikan air tawar serta ayam kampung."
+      },
+      {
+        id: 15,
+        name: "Sentra Oleh-Oleh Galendo Ciamis",
+        category: "kuliner",
+        categoryName: "Kuliner & UMKM",
+        kecamatan: "Ciamis",
+        lat: -7.3275,
+        lng: 108.3496,
+        price: "Mulai Rp 15.000 / Kemasan",
+        hours: "08.00 - 20.00 WIB",
+        image: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=700&auto=format&fit=crop",
+        location: "Kawasan Jl. Ir. H. Juanda, Ciamis Kota",
+        rating: 4.8,
+        featured: false,
+        moods: ["kuliner-malam", "transit"],
+        features: ["Galendo Murni & Cokelat", "Abon Sapi & Sale Pisang", "Kemasan Oleh-Oleh Rapi"],
+        desc: "Pusat buah tangan autentik khas Ciamis berupa Galendo (olahan sari kelapa bercita rasa gurih manis), keripik kaca, tengteng, dan mie golosor kering."
+      },
+      {
+        id: 16,
+        name: "Wisata & Lesehan Ikan Situ Wangi",
+        category: "kuliner",
+        categoryName: "Kuliner & UMKM",
+        kecamatan: "Kawali",
+        lat: -7.1714,
+        lng: 108.3748,
+        price: "Rp 5.000 - Rp 45.000",
+        hours: "08.00 - 18.00 WIB",
+        image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=700&auto=format&fit=crop",
+        location: "Desa Winduraja, Kec. Kawali",
+        rating: 4.7,
+        featured: false,
+        moods: ["kuliner-malam", "keluarga", "sunset"],
+        features: ["Bakar Ikan Tepi Danau", "Jogging Track Estetik", "Spot Foto Dermaga"],
+        desc: "Danau asri di Kawali yang telah direvitalisasi menjadi ruang rekreasi cantik sekaligus sentra kuliner bakar ikan nila dan gurame segar khas perikanan Ciamis."
+      },
+
+      // --- KATEGORI 5: CAFE & WFC ---
+      {
+        id: 17,
+        name: "Kopi Djati Ciamis",
+        category: "cafe",
+        categoryName: "Cafe & WFC",
+        kecamatan: "Ciamis",
+        lat: -7.3245,
+        lng: 108.3482,
+        price: "Rp 15.000 - Rp 30.000",
+        hours: "09.00 - 23.00 WIB",
+        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=700&auto=format&fit=crop",
+        location: "Jl. Ir. H. Juanda, Ciamis Kota",
+        rating: 4.9,
+        featured: true,
+        moods: ["belajar", "keluarga", "transit"],
+        features: ["⚡ WiFi Kencang", "Banyak Stopkontak", "Teduh Pohon Jati"],
+        desc: "Cafe rindang bernuansa alam di tengah kota Ciamis. Spot andalan pelajar, mahasiswa, dan pekerja remote (WFC) untuk nugas atau rapat santai."
+      },
+      {
+        id: 18,
+        name: "Overtime Coffee Ciamis",
+        category: "cafe",
+        categoryName: "Cafe & WFC",
+        kecamatan: "Ciamis",
+        lat: -7.3288,
+        lng: 108.3567,
+        price: "Rp 18.000 - Rp 35.000",
+        hours: "09.00 - 23.00 WIB",
+        image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=700&auto=format&fit=crop",
+        location: "Jl. K.H. Ahmad Dahlan, Ciamis Kota",
+        rating: 4.8,
+        featured: false,
+        moods: ["belajar"],
+        features: ["Indoor AC Tenang", "WiFi Stabil", "Meja Nyaman Laptopan"],
+        desc: "Kedai kopi modern minimalis dengan ruang indoor ber-AC yang kondusif untuk fokus ngoding, mengerjakan tugas sekolah/kuliah, maupun diskusi tim."
+      },
+      {
+        id: 19,
+        name: "Sabandina Koffie",
+        category: "cafe",
+        categoryName: "Cafe & WFC",
+        kecamatan: "Ciamis",
+        lat: -7.3318,
+        lng: 108.3522,
+        price: "Rp 15.000 - Rp 28.000",
+        hours: "08.00 - 23.00 WIB",
+        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&auto=format&fit=crop",
+        location: "Sekitar Jl. K.H. Ahmad Dahlan, Ciamis",
+        rating: 4.8,
+        featured: false,
+        moods: ["belajar", "kuliner-malam"],
+        features: ["Biji Kopi Lokal Priangan", "Buka Sejak Pagi", "Area Semi-Outdoor Asri"],
+        desc: "Salah satu coffee shop pelopor dan terfavorit di Ciamis yang menyajikan racikan espresso maupun manual brew dari biji kopi terbaik Jawa Barat."
+      },
+      {
+        id: 20,
+        name: "Coffeecane Ciamis",
+        category: "cafe",
+        categoryName: "Cafe & WFC",
+        kecamatan: "Ciamis",
+        lat: -7.3302,
+        lng: 108.3585,
+        price: "Rp 15.000 - Rp 32.000",
+        hours: "10.00 - 22.30 WIB",
+        image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=700&auto=format&fit=crop",
+        location: "Jl. Rumah Sakit, Kec. Ciamis",
+        rating: 4.7,
+        featured: false,
+        moods: ["belajar"],
+        features: ["Suasana Homey", "Stopkontak Tiap Meja", "Camilan Lengkap"],
+        desc: "Tempat nongkrong dan kerja yang tenang tidak jauh dari pusat pelayanan publik Ciamis, cocok untuk rehat sore sambil menikmati kopi susu dingin."
+      },
+
+      // --- KATEGORI 6: TAMAN & RUANG PUBLIK (BARU) ---
+      {
+        id: 21,
+        name: "Alun-Alun Ciamis & Taman Raflesia",
+        category: "publik",
+        categoryName: "Taman & Kota",
+        kecamatan: "Ciamis",
+        lat: -7.3258,
+        lng: 108.3532,
+        price: "Gratis (Parkir Resmi)",
+        hours: "24 Jam",
+        image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=700&auto=format&fit=crop",
+        location: "Jl. Jend. Sudirman, Pusat Kota Ciamis",
+        rating: 4.9,
+        featured: true,
+        moods: ["keluarga", "transit", "gratis-murah", "kuliner-malam"],
+        features: ["Rumput Sintetis Luas", "Gorobok Domba Ikonik", "Masjid Agung Ciamis"],
+        desc: "Jantung ruang terbuka hijau kebanggaan masyarakat Ciamis yang bersih peraih Adipura. Dilengkapi area duduk keluarga, air mancur, Masjid Agung, hingga hiburan legendaris kereta Gorobok Domba."
+      },
+      {
+        id: 22,
+        name: "Taman Hutan Kota Lokasana",
+        category: "publik",
+        categoryName: "Taman & Kota",
+        kecamatan: "Ciamis",
+        lat: -7.3332,
+        lng: 108.3498,
+        price: "Gratis",
+        hours: "06.00 - 21.00 WIB",
+        image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=700&auto=format&fit=crop",
+        location: "Jl. Lokasana, Kelurahan Ciamis",
+        rating: 4.7,
+        featured: false,
+        moods: ["keluarga", "gratis-murah"],
+        features: ["Lintasan Jogging Teduh", "Lapangan Basket & Voli", "Jajanan Sore Kaki Lima"],
+        desc: "Ruang terbuka hijau berpepohonan besar tempat warga Ciamis berolahraga pagi dan sore, latihan komunitas sekolah, hingga berburu jajanan kaki lima."
+      }
+    ];
+
+    // Menggabungkan data bawaan dengan data kontribusi warga dari localStorage
+    function loadAllDestinations() {
+      const custom = JSON.parse(localStorage.getItem('ciamisku_custom_places') || '[]');
+      return [...defaultDestinations, ...custom];
+    }
+
+    let destinations = loadAllDestinations();
+    let currentCategory = 'all';
+    let currentMood = 'all';
+    let currentKecamatan = 'all';
+    let currentSearch = '';
+    let currentMapFilter = 'all';
+    let favoriteIds = JSON.parse(localStorage.getItem('ciamisku_favorites') || '[]');
+    let mapInstance = null;
+    let markerLayerGroup = null;
+
+    // 1. Inisialisasi Peta Interaktif Leaflet dengan Pin Berwarna per Kategori
+    function initCiamisMap() {
+      mapInstance = L.map('ciamisMap').setView([-7.265, 108.355], 11);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance);
+
+      markerLayerGroup = L.layerGroup().addTo(mapInstance);
+      renderMapMarkers();
+    }
+
+    function renderMapMarkers() {
+      if (!markerLayerGroup) return;
+      markerLayerGroup.clearLayers();
+
+      const filteredForMap = destinations.filter(p => currentMapFilter === 'all' || p.category === currentMapFilter);
+
+      filteredForMap.forEach(place => {
+        const meta = categoryMeta[place.category] || categoryMeta.alam;
+
+        const customIcon = L.divIcon({
+          className: '',
+          html: `<div class="custom-pin" style="background:${meta.color}; width:32px; height:32px;">
+                   <i class="ph-fill ${meta.icon}"></i>
+                 </div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -16]
+        });
+
+        const marker = L.marker([place.lat, place.lng], { icon: customIcon }).addTo(markerLayerGroup);
+
+        const popupContent = `
+          <div style="font-family: 'Plus Jakarta Sans', sans-serif; width: 190px;">
+            <img src="${place.image}" onerror="this.src='${fallbackImage}'" style="width:100%; height:88px; object-fit:cover; border-radius:10px; margin-bottom:6px;">
+            <span style="font-size:9px; font-weight:800; color:${meta.color}; text-transform:uppercase;">${place.categoryName} • Kec. ${place.kecamatan}</span>
+            <b style="font-size:12px; display:block; color:#0f172a; margin:2px 0;">${place.name}</b>
+            <span style="font-size:10px; color:#64748b; display:block; margin-bottom:8px;">🎟️ ${place.price}</span>
+            <button onclick="openModal(${place.id})" style="background:#059669; color:white; border:none; padding:6px 8px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; width:100%;">
+              Lihat Detail & Rute
+            </button>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+      });
+    }
+
+    function filterMapMarkers(cat) {
+      currentMapFilter = cat;
+      document.querySelectorAll('.map-filter-btn').forEach(btn => {
+        if (btn.dataset.mapcat === cat) {
+          btn.className = 'map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-900 text-white whitespace-nowrap flex items-center gap-1 transition';
+        } else {
+          btn.className = 'map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap flex items-center gap-1 transition';
+        }
+      });
+      renderMapMarkers();
+    }
+
+    // 2. Populate Dropdown Kecamatan Otomatis
+    function populateKecamatanOptions() {
+      const select = document.getElementById('kecamatanSelect');
+      const kecList = [...new Set(destinations.map(d => d.kecamatan))].sort();
+      select.innerHTML = `<option value="all">Semua Kecamatan (${kecList.length})</option>` +
+        kecList.map(k => `<option value="${k}">Kec. ${k}</option>`).join('');
+      select.value = currentKecamatan;
+    }
+
+    // 3. Render Komponen Kartu Destinasi
+    function createPlaceCard(item) {
+      const isFav = favoriteIds.includes(item.id);
+      const meta = categoryMeta[item.category] || categoryMeta.alam;
+
+      return `
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+          <div>
+            <div class="relative h-44 w-full overflow-hidden bg-slate-200">
+              <img src="${item.image}" onerror="this.src='${fallbackImage}'" alt="${item.name}" class="w-full h-full object-cover">
+              
+              <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/95 backdrop-blur-md text-slate-800 text-[10px] font-extrabold rounded-full shadow-sm flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full" style="background:${meta.color}"></span>
+                ${item.categoryName}
+              </span>
+
+              <button onclick="toggleFavorite(${item.id})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-rose-500 shadow hover:scale-110 transition">
+                <i class="${isFav ? 'ph-fill' : 'ph-bold'} ph-heart text-base"></i>
+              </button>
+
+              <div class="absolute bottom-3 left-3 px-2 py-0.5 bg-slate-900/75 backdrop-blur text-white text-[10px] font-semibold rounded-lg">
+                ${item.price}
+              </div>
+
+              <div class="absolute bottom-3 right-3 px-2 py-0.5 bg-black/65 backdrop-blur text-white text-[11px] font-semibold rounded-lg flex items-center gap-1">
+                <i class="ph-fill ph-star text-amber-400"></i> ${item.rating}
+              </div>
+            </div>
+
+            <div class="p-4">
+              <h4 class="font-bold text-slate-800 text-sm mb-1 leading-snug">${item.name}</h4>
+              <p class="text-xs text-slate-400 flex items-center gap-1 mb-2.5">
+                <i class="ph-bold ph-map-pin text-emerald-600 shrink-0"></i>
+                <span class="truncate">${item.location}</span>
+              </p>
+              
+              <div class="flex flex-wrap gap-1 mb-2.5">
+                ${item.features.slice(0, 2).map(f => `
+                  <span class="px-2 py-0.5 ${meta.badgeBg} text-[10px] font-semibold rounded-md">
+                    ${f}
+                  </span>
+                `).join('')}
+              </div>
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                ${item.desc}
+              </p>
+            </div>
+          </div>
+          
+          <div class="p-4 pt-0">
+            <button onclick="openModal(${item.id})" class="w-full py-2.5 rounded-xl border border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-xs transition duration-200 flex items-center justify-center gap-1.5">
+              Detail, Jam Buka & Rute <i class="ph-bold ph-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 4. Render Grid Eksplor & Highlight Beranda
+    function renderDestinations() {
+      const grid = document.getElementById('destinationsGrid');
+      const empty = document.getElementById('emptyState');
+      const countLabel = document.getElementById('resultCount');
+
+      const filtered = destinations.filter(item => {
+        const matchCategory = (currentCategory === 'all' || item.category === currentCategory);
+        const matchMood = (currentMood === 'all' || item.moods.includes(currentMood));
+        const matchKec = (currentKecamatan === 'all' || item.kecamatan === currentKecamatan);
+        const q = currentSearch.toLowerCase();
+        const matchSearch = item.name.toLowerCase().includes(q) ||
+                            item.location.toLowerCase().includes(q) ||
+                            item.kecamatan.toLowerCase().includes(q) ||
+                            item.features.some(f => f.toLowerCase().includes(q)) ||
+                            item.desc.toLowerCase().includes(q);
+        return matchCategory && matchMood && matchKec && matchSearch;
+      });
+
+      countLabel.textContent = `Menampilkan ${filtered.length} dari ${destinations.length} destinasi asli Ciamis`;
+      document.getElementById('navTotalCount').textContent = destinations.length;
+      document.getElementById('statTotalPlaces').textContent = destinations.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = filtered.map(item => createPlaceCard(item)).join('');
+      }
+
+      // Render 6 kartu pilihan lintas kategori di Beranda
+      const homeGrid = document.getElementById('homeHighlightGrid');
+      if (homeGrid) {
+        const highlights = destinations.filter(d => d.featured).slice(0, 6);
+        homeGrid.innerHTML = highlights.map(item => createPlaceCard(item)).join('');
+      }
+
+      updateFavoriteUI();
+    }
+
+    // 5. Navigasi Tab & Shortcut Kategori/Mood
+    function switchTab(targetTab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(`tab-${targetTab}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      document.querySelectorAll('.desktop-tab-btn').forEach(btn => {
+        if (btn.dataset.target === targetTab) {
+          btn.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
+          btn.classList.remove('text-slate-600');
+        } else {
+          btn.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
+          btn.classList.add('text-slate-600');
+        }
+      });
+
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        if (btn.dataset.target === targetTab) {
+          btn.classList.remove('text-slate-400');
+          btn.classList.add('text-emerald-600', 'font-bold');
+        } else {
+          btn.classList.remove('text-emerald-600', 'font-bold');
+          btn.classList.add('text-slate-400');
+        }
+      });
+
+      if (targetTab === 'favorit') renderFavorites();
+      if (targetTab === 'beranda' && mapInstance) {
+        setTimeout(() => mapInstance.invalidateSize(), 200);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function quickJumpCategory(cat) {
+      resetAllFilters();
+      setCategoryFilter(cat);
+      switchTab('eksplor');
+    }
+
+    function quickJumpMood(mood) {
+      resetAllFilters();
+      setMoodFilter(mood);
+      switchTab('eksplor');
+    }
+
+    // 6. Bookmark / Favorit
+    function toggleFavorite(id) {
+      if (favoriteIds.includes(id)) {
+        favoriteIds = favoriteIds.filter(favId => favId !== id);
+      } else {
+        favoriteIds.push(id);
+      }
+      localStorage.setItem('ciamisku_favorites', JSON.stringify(favoriteIds));
+      renderDestinations();
+      renderFavorites();
+      updateFavoriteUI();
+    }
+
+    function updateFavoriteUI() {
+      const count = favoriteIds.length;
+      document.querySelectorAll('.fav-count').forEach(el => el.textContent = count);
+      document.querySelectorAll('.fav-badge').forEach(el => {
+        el.textContent = count;
+        if (count > 0) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    function renderFavorites() {
+      const favGrid = document.getElementById('favoritesGrid');
+      const favEmpty = document.getElementById('favoriteEmptyState');
+      const favItems = destinations.filter(d => favoriteIds.includes(d.id));
+
+      if (favItems.length === 0) {
+        favGrid.innerHTML = '';
+        favEmpty.classList.remove('hidden');
+      } else {
+        favEmpty.classList.add('hidden');
+        favGrid.innerHTML = favItems.map(item => createPlaceCard(item)).join('');
+      }
+    }
+
+    // 7. Filter Handlers
+    function setCategoryFilter(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-card').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'cat-card p-2.5 rounded-2xl bg-emerald-50/70 border border-emerald-500 text-emerald-800 font-bold flex flex-col items-center justify-center gap-1 shadow-sm transition';
+        } else {
+          btn.className = 'cat-card p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 font-semibold flex flex-col items-center justify-center gap-1 shadow-sm transition';
+        }
+      });
+      renderDestinations();
+    }
+
+    function setMoodFilter(mood) {
+      currentMood = mood;
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        if (btn.dataset.mood === mood) {
+          btn.className = 'mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-900 text-white border-slate-900 transition';
+        } else {
+          btn.className = 'mood-btn px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border bg-slate-100 text-slate-600 border-slate-200 hover:border-emerald-500 transition';
+        }
+      });
+      renderDestinations();
+    }
+
+    function handleKecamatanFilter() {
+      currentKecamatan = document.getElementById('kecamatanSelect').value;
+      renderDestinations();
+    }
+
+    function handleSearch() {
+      currentSearch = document.getElementById('searchInput').value;
+      renderDestinations();
+    }
+
+    function resetAllFilters() {
+      currentSearch = '';
+      currentKecamatan = 'all';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('kecamatanSelect').value = 'all';
+      setMoodFilter('all');
+      setCategoryFilter('all');
+    }
+
+    // 8. Modal Detail & Sorot Peta
+    function openModal(id) {
+      const item = destinations.find(d => d.id === id);
+      if (!item) return;
+
+      const modalImg = document.getElementById('modalImg');
+      modalImg.src = item.image;
+      modalImg.onerror = () => { modalImg.src = fallbackImage; };
+
+      document.getElementById('modalCategory').textContent = `${item.categoryName} • Kec. ${item.kecamatan}`;
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalRating').textContent = item.rating;
+      document.getElementById('modalLocation').querySelector('span').textContent = item.location;
+      document.getElementById('modalPrice').textContent = item.price;
+      document.getElementById('modalHours').textContent = item.hours;
+      document.getElementById('modalDesc').textContent = item.desc;
+
+      const featContainer = document.getElementById('modalFeatures');
+      featContainer.innerHTML = item.features.map(f => `
+        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-lg border border-emerald-100 flex items-center gap-1">
+          <i class="ph-bold ph-check text-emerald-600"></i> ${f}
+        </span>
+      `).join('');
+
+      document.getElementById('modalMapsLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + ' Kabupaten Ciamis')}`;
+      
+      document.getElementById('modalFocusMapBtn').onclick = () => {
+        closeModal();
+        filterMapMarkers('all');
+        switchTab('beranda');
+        setTimeout(() => {
+          mapInstance.flyTo([item.lat, item.lng], 14, { duration: 1.2 });
+        }, 250);
+      };
+
+      const modal = document.getElementById('detailModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // 9. Form Tambah Spot Baru oleh Warga
+    function openAddPlaceModal() {
+      const modal = document.getElementById('addPlaceModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeAddPlaceModal() {
+      const modal = document.getElementById('addPlaceModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitNewPlace(e) {
+      e.preventDefault();
+      const cat = document.getElementById('newCategory').value;
+      const meta = categoryMeta[cat];
+      const kec = document.getElementById('newKecamatan').value.trim();
+
+      // Koordinat sekitar pusat Ciamis dengan sedikit offset acak agar pin terlihat rapi saat demo
+      const randomOffsetLat = (Math.random() - 0.5) * 0.06;
+      const randomOffsetLng = (Math.random() - 0.5) * 0.06;
+
+      const newPlace = {
+        id: Date.now(),
+        name: document.getElementById('newName').value.trim(),
+        category: cat,
+        categoryName: meta.label,
+        kecamatan: kec,
+        lat: -7.315 + randomOffsetLat,
+        lng: 108.353 + randomOffsetLng,
+        price: document.getElementById('newPrice').value.trim(),
+        hours: document.getElementById('newHours').value.trim(),
+        image: fallbackImage,
+        location: `Kec. ${kec}, Kabupaten Ciamis`,
+        rating: 5.0,
+        featured: false,
+        moods: ["keluarga", "transit"],
+        features: ["Usulan Warga Lokal", "Potensi Baru Ciamis"],
+        desc: document.getElementById('newDesc').value.trim()
+      };
+
+      const custom = JSON.parse(localStorage.getItem('ciamisku_custom_places') || '[]');
+      custom.push(newPlace);
+      localStorage.setItem('ciamisku_custom_places', JSON.stringify(custom));
+
+      destinations = loadAllDestinations();
+      populateKecamatanOptions();
+      renderDestinations();
+      renderMapMarkers();
+      closeAddPlaceModal();
+      e.target.reset();
+
+      switchTab('eksplor');
+      setCategoryFilter(cat);
+    }
+
+    function resetCustomPlaces() {
+      localStorage.removeItem('ciamisku_custom_places');
+      destinations = loadAllDestinations();
+      populateKecamatanOptions();
+      resetAllFilters();
+      renderMapMarkers();
+      alert('Data berhasil dikembalikan ke 22 destinasi asli Ciamis.');
+    }
+
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('detailModal')) closeModal();
+      if (event.target === document.getElementById('addPlaceModal')) closeAddPlaceModal();
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateKecamatanOptions();
+      initCiamisMap();
+      renderDestinations();
+      updateFavoriteUI();
+    });
+  </script>
+</body>
+</html>
