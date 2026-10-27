@@ -79,91 +79,116 @@
     .custom-photo-marker {
       background: transparent !important;
       border: none !important;
+      width: 38px !important;
+      height: 46px !important;
     }
     .photo-pin-wrapper {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transform-origin: bottom center;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      width: 38px !important;
+      height: 46px !important;
+      cursor: pointer !important;
+      transform-origin: 19px 44px !important;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0.1s !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      user-select: none !important;
     }
     .photo-pin-wrapper:hover {
-      transform: scale(1.24) translateY(-5px);
-      z-index: 9999 !important;
+      transform: scale(1.24) translateY(-4px) !important;
+      z-index: 999999 !important;
     }
-    .photo-pin-wrapper {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transform-origin: bottom center;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0.1s;
+    .photo-pin-body {
+      position: relative !important;
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      max-width: 38px !important;
+      min-height: 38px !important;
+      max-height: 38px !important;
+      border-radius: 50% !important;
+      border-width: 2.5px !important;
+      border-style: solid !important;
+      background: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.38) !important;
+      box-sizing: border-box !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .photo-pin-wrapper:hover .photo-pin-body {
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5) !important;
+    }
+    .photo-pin-cropper {
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      border-radius: 50% !important;
+      overflow: hidden !important;
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #f1f5f9 !important;
       margin: 0 !important;
       padding: 0 !important;
     }
-    .photo-pin-wrapper:hover {
-      transform: scale(1.24) translateY(-4px);
-      z-index: 99999 !important;
-    }
-    .photo-pin-body {
-      position: relative;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border-width: 2.5px;
-      border-style: solid;
-      background: #ffffff;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
-      overflow: visible;
-      transition: box-shadow 0.2s ease;
-      box-sizing: border-box;
-    }
-    .photo-pin-wrapper:hover .photo-pin-body {
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) !important;
-    }
     .photo-pin-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      background: #e2e8f0;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+      border-radius: 50% !important;
+      aspect-ratio: 1 / 1 !important;
+      display: block !important;
+      pointer-events: none !important;
     }
     .photo-pin-badge {
-      position: absolute;
-      bottom: -2px;
-      right: -2px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 1.5px solid #ffffff;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8.5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      z-index: 2;
+      position: absolute !important;
+      bottom: -2px !important;
+      right: -2px !important;
+      width: 15px !important;
+      height: 15px !important;
+      min-width: 15px !important;
+      min-height: 15px !important;
+      border-radius: 50% !important;
+      border: 1.5px solid #ffffff !important;
+      color: #ffffff !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 8px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35) !important;
+      z-index: 10 !important;
+      box-sizing: border-box !important;
     }
     .photo-pin-tip {
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top-width: 7px;
-      border-top-style: solid;
-      margin-top: -1px;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+      width: 0 !important;
+      height: 0 !important;
+      border-left: 5px solid transparent !important;
+      border-right: 5px solid transparent !important;
+      border-top-width: 7px !important;
+      border-top-style: solid !important;
+      margin-top: -1px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25)) !important;
     }
     .photo-pin-label {
       opacity: 0;
       visibility: hidden;
       position: absolute;
-      top: -28px;
+      top: -26px;
       background: rgba(15, 23, 42, 0.94);
       color: #ffffff;
       font-size: 11px;
@@ -171,11 +196,12 @@
       padding: 3px 9px;
       border-radius: 9999px;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       pointer-events: none;
       transition: opacity 0.15s ease, transform 0.15s ease;
       transform: translateY(4px);
+      z-index: 9999999 !important;
     }
     .photo-pin-wrapper:hover .photo-pin-label {
       opacity: 1;
@@ -223,27 +249,23 @@
 
       <!-- Desktop Nav Links -->
       <nav class="hidden md:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
-        <button onclick="switchTab('beranda')" class="desktop-tab-btn bg-white text-emerald-700 shadow-sm px-4 py-2 rounded-xl text-xs font-bold transition duration-200" data-target="beranda">
+        <button onclick="switchTab('beranda')" class="desktop-tab-btn bg-[#fdf2fa] text-[#9e0b84] shadow-sm px-4 py-2 rounded-xl text-xs font-bold transition duration-200" data-target="beranda">
           <i class="ph-bold ph-house mr-1 text-sm"></i> Beranda
         </button>
-        <button onclick="switchTab('eksplor')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="eksplor">
+        <button onclick="switchTab('eksplor')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#9e0b84] transition duration-200" data-target="eksplor">
           <i class="ph-bold ph-magnifying-glass mr-1 text-sm"></i> Eksplor (<span id="navTotalCount">0</span>)
         </button>
-        <button onclick="switchTab('favorit')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="favorit">
+        <button onclick="switchTab('favorit')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#9e0b84] transition duration-200" data-target="favorit">
           <i class="ph-bold ph-heart mr-1 text-sm"></i> Tersimpan (<span class="fav-count">0</span>)
         </button>
-        <button onclick="switchTab('info')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 transition duration-200" data-target="info">
+        <button onclick="switchTab('info')" class="desktop-tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-[#9e0b84] transition duration-200" data-target="info">
           <i class="ph-bold ph-info mr-1 text-sm"></i> Info Wilayah
         </button>
       </nav>
 
-      <!-- Portal Perangkat Desa / Admin Login Button -->
+      <!-- Right Action Items (Clean, No Public Login Button) -->
       <div class="flex items-center gap-2">
-        <a href="/ulinkaciamis/admin/login.php" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-sm">
-          <i class="ph-bold ph-shield-check text-sm text-emerald-400"></i>
-          <span>Portal Pengurus</span>
-        </a>
-        <button onclick="switchTab('favorit')" class="md:hidden relative w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+        <button onclick="switchTab('favorit')" class="relative w-10 h-10 rounded-full bg-slate-100 hover:bg-[#fdf2fa] flex items-center justify-center text-slate-600 hover:text-[#9e0b84] transition" title="Destinasi Tersimpan">
           <i class="ph-bold ph-heart text-lg"></i>
           <span class="fav-badge absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold hidden">0</span>
         </button>
@@ -354,27 +376,27 @@
         <!-- Toolbar Pintasan Cepat (Lompat Langsung ke Alun-Alun dll) -->
         <div class="mb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
           <span class="text-xs font-bold text-slate-400 whitespace-nowrap flex items-center gap-1 mr-1">
-            <i class="ph-fill ph-crosshair text-emerald-600"></i> Fokus Cepat:
+            <i class="ph-fill ph-crosshair text-[#9e0b84]"></i> Fokus Cepat:
           </span>
-          <button type="button" onclick="flyToSpot(-7.3258, 108.3532, 16, 'Alun-Alun Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 whitespace-nowrap flex items-center gap-1.5 shadow-sm transition">
+          <button type="button" onclick="flyToSpot(-7.3267, 108.3532, 16, 'Alun-Alun Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#fdf2fa] text-[#9e0b84] hover:bg-[#fae8f6] border border-[#f5d0f0] whitespace-nowrap flex items-center gap-1.5 shadow-sm transition">
             🏛️ Alun-Alun Ciamis
           </button>
-          <button type="button" onclick="flyToSpot(-7.3262, 108.3524, 16, 'Masjid Agung Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.3267, 108.3511, 16, 'Masjid Agung Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🕌 Masjid Agung
           </button>
-          <button type="button" onclick="flyToSpot(-7.1352, 108.2811, 15, 'Situ Lengkong Panjalu')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.1352, 108.2811, 15, 'Situ Lengkong Panjalu')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🏞️ Situ Panjalu
           </button>
-          <button type="button" onclick="flyToSpot(-7.1950, 108.3680, 15, 'Astana Gede Kawali')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.1950, 108.3680, 15, 'Astana Gede Kawali')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             📜 Kawali
           </button>
-          <button type="button" onclick="flyToSpot(-7.2785, 108.3180, 15, 'Cadas Ngampar')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.2785, 108.3180, 15, 'Cadas Ngampar')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🌊 Cadas Ngampar
           </button>
-          <button type="button" onclick="flyToSpot(-7.3320, 108.3580, 16, 'Stadion Galuh Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.3341, 108.3565, 16, 'Stadion Galuh Ciamis')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             ⚽ Stadion Galuh
           </button>
-          <button type="button" onclick="flyToSpot(-7.3512, 108.3245, 16, 'Jembatan Cirahong')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
+          <button type="button" onclick="flyToSpot(-7.3512, 108.3245, 16, 'Jembatan Cirahong')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-slate-700 hover:bg-[#fdf2fa] hover:text-[#9e0b84] border border-slate-200 whitespace-nowrap flex items-center gap-1.5 transition">
             🌉 Jembatan Cirahong
           </button>
           <button type="button" onclick="resetMapView()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap flex items-center gap-1 transition">
@@ -385,7 +407,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
           <div>
             <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
-              <i class="ph-fill ph-map-pin text-emerald-600 text-xl"></i> Peta Interaktif Sebaran Pin Foto Asli
+              <i class="ph-fill ph-map-pin text-[#9e0b84] text-xl"></i> Peta Interaktif Sebaran Pin Foto Asli
             </h3>
             <p class="text-xs text-slate-500">Pin menampilkan foto asli tempat. Arahkan kursor atau klik pin untuk melihat detail informasi.</p>
           </div>
@@ -628,16 +650,13 @@
       </div>
 
       <div class="border-t border-slate-100 pt-4 space-y-3">
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-          <h4 class="text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
-            <i class="ph-bold ph-shield-check text-emerald-600"></i> Untuk Pengurus Desa & Kecamatan
+        <div class="p-4 rounded-2xl bg-[#fdf2fa] border border-[#f5d0f0]">
+          <h4 class="text-xs font-bold text-[#9e0b84] mb-1 flex items-center gap-1.5">
+            <i class="ph-bold ph-compass text-[#9e0b84]"></i> Panduan Resmi Tatar Galuh Ciamis
           </h4>
-          <p class="text-xs text-slate-500 mb-3 leading-relaxed">
-            Masing-masing pengurus desa atau kecamatan dapat login ke Portal Pengurus Wilayah untuk mendaftarkan dan memperbarui fasilitas, UMKM, atau destinasi wisata di daerahnya.
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Eksplorasi destinasi wisata alam, curug, situs sejarah Kerajaan Galuh, spot kuliner legendaris, serta fasilitas publik di seluruh wilayah Kabupaten Ciamis.
           </p>
-          <a href="/ulinkaciamis/admin/login.php" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition">
-            <i class="ph-bold ph-key"></i> Masuk ke Portal Pengurus
-          </a>
         </div>
       </div>
     </div>
@@ -871,7 +890,6 @@
       if (countEl) countEl.innerText = filtered.length;
 
       // Smart proximity offset: gently spread out pins that are very close to each other
-      const coordCounts = {};
       filtered.forEach((place, index) => {
         const meta = getMetaForPlace(place);
         const photoUrl = place.foto || place.image || fallbackImage;
@@ -885,7 +903,9 @@
           <div class="photo-pin-wrapper" title="${placeName}">
             <div class="photo-pin-label">${placeName}</div>
             <div class="photo-pin-body" style="border-color:${meta.color};">
-              <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" alt="${placeName}" class="photo-pin-img" loading="lazy" />
+              <div class="photo-pin-cropper">
+                <img src="${photoUrl}" onerror="this.src='${fallbackImage}'" alt="${placeName}" class="photo-pin-img" loading="lazy" />
+              </div>
               <div class="photo-pin-badge" style="background:${meta.color}">
                 <i class="ph-fill ${meta.icon}"></i>
               </div>
@@ -899,25 +919,12 @@
           html: photoPinHtml,
           iconSize: [38, 45],
           iconAnchor: [19, 44],
-          popupAnchor: [0, -46]
+          popupAnchor: [0, -45]
         });
 
-        let lat = parseFloat(place.lat || place.latitude);
-        let lng = parseFloat(place.lng || place.longitude);
+        const lat = parseFloat(place.lat || place.latitude);
+        const lng = parseFloat(place.lng || place.longitude);
         if (isNaN(lat) || isNaN(lng)) return;
-
-        // Proximity key rounded to ~30 meters
-        const coordKey = `${lat.toFixed(4)}_${lng.toFixed(4)}`;
-        if (coordCounts[coordKey]) {
-          const step = coordCounts[coordKey];
-          const angle = (step * 72) * (Math.PI / 180);
-          const radius = 0.00035 * Math.ceil(step / 5);
-          lat += radius * Math.cos(angle);
-          lng += (radius * 1.2) * Math.sin(angle);
-          coordCounts[coordKey]++;
-        } else {
-          coordCounts[coordKey] = 1;
-        }
 
         const marker = L.marker([lat, lng], { icon: customIcon }).addTo(markerLayerGroup);
 
