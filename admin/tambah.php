@@ -41,13 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($nama) || $kat_id < 1 || empty($lat) || empty($lng)) {
-        $error = 'Nama, kategori, latitude, dan longitude wajib diisi.';
+        $error = 'Nama, kategori, latitude, dan longitude wajib diisi secara lengkap.';
     } else {
-        $by = $_SESSION['admin_nama'];
+        $by = $_SESSION['admin_nama'] ?? 'Admin';
         $stmt = $db->prepare("INSERT INTO destinasi (nama, kategori_id, kecamatan, deskripsi, alamat, latitude, longitude, harga, wifi, jam_buka, jam_tutup, no_telepon, status, ditambahkan_oleh, foto) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
         $stmt->bind_param('sissssssisissss', $nama, $kat_id, $kecamatan, $deskripsi, $alamat, $lat, $lng, $harga, $wifi, $jam_buka, $jam_tutup, $no_telp, $status, $by, $foto);
         if ($stmt->execute()) {
-            $msg = 'Destinasi berhasil ditambahkan!';
+            $msg = 'Destinasi berhasil ditambahkan ke direktori & peta!';
         } else {
             $error = 'Gagal menyimpan: ' . $db->error;
         }
@@ -59,9 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tambah Destinasi - UlinKa Ciamis</title>
+<title>Tambah Destinasi Baru - UlinKa Ciamis</title>
+<link rel="icon" type="image/png" href="/ulinkaciamis/assets/images/lambang_ciamis.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="/ulinkaciamis/assets/css/admin.css">
@@ -71,26 +73,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="admin-main">
   <?php include 'partials/topbar.php'; ?>
   <div class="admin-content">
+
     <div class="page-header">
       <div>
-        <h1 class="page-title">Tambah Destinasi</h1>
-        <p class="page-sub">Tambahkan tempat/fasilitas baru ke peta</p>
+        <h1 class="page-title">Tambah Destinasi Baru</h1>
+        <p class="page-sub">Lengkapi formulir di bawah untuk menambahkan titik objek wisata atau fasilitas ke peta</p>
       </div>
-      <a href="/ulinkaciamis/admin/kelola.php" class="btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
+      <a href="/ulinkaciamis/admin/kelola.php" class="btn-secondary"><i class="fas fa-arrow-left"></i> Kembali ke Daftar</a>
     </div>
 
-    <?php if($msg): ?><div class="alert alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($msg) ?></div><?php endif; ?>
-    <?php if($error): ?><div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($error) ?></div><?php endif; ?>
+    <?php if($msg): ?><div class="alert alert-success"><i class="fas fa-circle-check"></i> <?= htmlspecialchars($msg) ?></div><?php endif; ?>
+    <?php if($error): ?><div class="alert alert-error"><i class="fas fa-triangle-exclamation"></i> <?= htmlspecialchars($error) ?></div><?php endif; ?>
 
     <div class="form-layout">
       <form method="POST" enctype="multipart/form-data" class="form-card">
 
+        <!-- SECTION 1 -->
         <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Informasi Dasar</h3>
+          <h3 class="form-section-title"><i class="fas fa-circle-info"></i> Informasi Dasar Tempat</h3>
           <div class="form-grid">
             <div class="form-group full">
-              <label>Nama Tempat <span class="req">*</span></label>
-              <input type="text" name="nama" placeholder="cth: Alfamart Jl. Sudirman" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>" required>
+              <label>Nama Destinasi / Tempat / Fasilitas <span class="req">*</span></label>
+              <input type="text" name="nama" placeholder="Contoh: Alfamart Jl. Sudirman Ciamis" value="<?= htmlspecialchars($_POST['nama'] ?? '') ?>" required>
             </div>
             <div class="form-group">
               <label>Kategori <span class="req">*</span></label>
@@ -116,61 +120,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
             </div>
             <div class="form-group">
-              <label>Status</label>
+              <label>Status Penayangan</label>
               <select name="status">
-                <option value="aktif">✅ Aktif (tampil di peta)</option>
-                <option value="nonaktif">❌ Nonaktif</option>
+                <option value="aktif">Aktif (Ditampilkan di peta publik)</option>
+                <option value="nonaktif">Nonaktif (Disembunyikan)</option>
               </select>
+            </div>
+            <div class="form-group">
+              <label>Foto Tempat / Fasilitas</label>
+              <input type="file" name="foto" accept="image/*">
+              <small class="form-hint">Format yang didukung: JPG, PNG, WEBP (Maks 5MB)</small>
             </div>
             <div class="form-group full">
               <label>Alamat Lengkap</label>
-              <input type="text" name="alamat" placeholder="cth: Jl. Jend. Sudirman No.1, Ciamis" value="<?= htmlspecialchars($_POST['alamat'] ?? '') ?>">
+              <input type="text" name="alamat" placeholder="Contoh: Jl. Jend. Sudirman No. 1, Ciamis Kota" value="<?= htmlspecialchars($_POST['alamat'] ?? '') ?>">
             </div>
             <div class="form-group full">
-              <label>Deskripsi Tempat</label>
-              <textarea name="deskripsi" rows="3" placeholder="Deskripsi daya tarik, fasilitas, atau keunggulan tempat ini..."><?= htmlspecialchars($_POST['deskripsi'] ?? '') ?></textarea>
-            </div>
-            <div class="form-group full">
-              <label>Foto Tempat / Fasilitas (Opsional)</label>
-              <input type="file" name="foto" accept="image/*" style="border:1px dashed rgba(255,255,255,.2);padding:10px;border-radius:10px;background:rgba(255,255,255,.02);color:#94a3b8">
-              <small style="color:#94a3b8;font-size:12px;margin-top:4px;display:block">Format: JPG, PNG, WEBP (Maks 5MB)</small>
+              <label>Deskripsi Ringkas</label>
+              <textarea name="deskripsi" rows="3" placeholder="Deskripsikan keunggulan, daya tarik, sejarah singkat, atau fasilitas yang tersedia..."><?= htmlspecialchars($_POST['deskripsi'] ?? '') ?></textarea>
             </div>
           </div>
         </div>
 
+        <!-- SECTION 2 -->
         <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-map-pin"></i> Koordinat — Klik peta untuk mengisi otomatis</h3>
+          <h3 class="form-section-title"><i class="fas fa-location-crosshairs"></i> Posisi Koordinat Peta</h3>
           <div class="form-grid">
             <div class="form-group">
               <label>Latitude <span class="req">*</span></label>
-              <input type="text" name="latitude" id="inputLat" placeholder="-7.3276" value="<?= htmlspecialchars($_POST['latitude'] ?? '') ?>" required>
+              <input type="text" name="latitude" id="inputLat" placeholder="-7.3276000" value="<?= htmlspecialchars($_POST['latitude'] ?? '') ?>" required>
             </div>
             <div class="form-group">
               <label>Longitude <span class="req">*</span></label>
-              <input type="text" name="longitude" id="inputLng" placeholder="108.3625" value="<?= htmlspecialchars($_POST['longitude'] ?? '') ?>" required>
+              <input type="text" name="longitude" id="inputLng" placeholder="108.3532000" value="<?= htmlspecialchars($_POST['longitude'] ?? '') ?>" required>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;margin:6px 0;flex-wrap:wrap;">
-            <span style="font-size:11px;color:#94a3b8;font-weight:600;"><i class="fas fa-crosshairs"></i> Lompat Cepat:</span>
-            <button type="button" onclick="jumpTo(-7.3258, 108.3532, 'Alun-Alun Ciamis')" style="padding:4px 8px;font-size:11px;background:#9e0b84;color:#fff;border:none;border-radius:6px;cursor:pointer;">🏛️ Alun-Alun Ciamis</button>
-            <button type="button" onclick="jumpTo(-7.1352, 108.2811, 'Panjalu')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">🏞️ Panjalu</button>
-            <button type="button" onclick="jumpTo(-7.1950, 108.3680, 'Kawali')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">📜 Kawali</button>
-            <button type="button" onclick="jumpTo(-7.2785, 108.3180, 'Sadananya')" style="padding:4px 8px;font-size:11px;background:#334155;color:#e2e8f0;border:none;border-radius:6px;cursor:pointer;">🌊 Sadananya</button>
+          
+          <div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px;flex-wrap:wrap;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:600;"><i class="fas fa-crosshairs"></i> Fokus Titik Cepat:</span>
+            <button type="button" onclick="jumpTo(-7.326694, 108.353192, 'Alun-Alun Ciamis')" class="btn-ghost-sm">Alun-Alun Ciamis</button>
+            <button type="button" onclick="jumpTo(-7.135200, 108.281100, 'Panjalu')" class="btn-ghost-sm">Situ Panjalu</button>
+            <button type="button" onclick="jumpTo(-7.195000, 108.368000, 'Kawali')" class="btn-ghost-sm">Astana Gede Kawali</button>
+            <button type="button" onclick="jumpTo(-7.278500, 108.318000, 'Sadananya')" class="btn-ghost-sm">Cadas Ngampar</button>
+            <button type="button" onclick="jumpTo(-7.334750, 108.359400, 'RSUD Ciamis')" class="btn-ghost-sm">RSUD Ciamis</button>
           </div>
-          <div id="pickMap" style="height:340px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.15);margin-top:4px"></div>
-          <p class="form-hint"><i class="fas fa-hand-pointer"></i> Klik lokasi di peta Ciamis untuk menandai koordinat presisi</p>
+          <div id="pickMap" style="height:350px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-strong);margin-top:6px;"></div>
+          <p class="form-hint"><i class="fas fa-circle-info"></i> Klik langsung di atas peta untuk menandai titik koordinat presisi secara otomatis.</p>
         </div>
 
+        <!-- SECTION 3 -->
         <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-circle-info"></i> Detail Fasilitas & Tiket</h3>
+          <h3 class="form-section-title"><i class="fas fa-clock"></i> Fasilitas, Tiket &amp; Jam Operasional</h3>
           <div class="form-grid">
             <div class="form-group">
-              <label>Harga / Tarif Tiket</label>
-              <input type="text" name="harga" placeholder="cth: Rp 10.000 / Gratis" value="<?= htmlspecialchars($_POST['harga'] ?? '') ?>">
+              <label>Harga Tiket / Biaya Masuk</label>
+              <input type="text" name="harga" placeholder="Contoh: Gratis / Rp 10.000" value="<?= htmlspecialchars($_POST['harga'] ?? '') ?>">
             </div>
             <div class="form-group">
-              <label>No. Telepon / WhatsApp</label>
-              <input type="text" name="no_telepon" placeholder="cth: (0265) 771000" value="<?= htmlspecialchars($_POST['no_telepon'] ?? '') ?>">
+              <label>Nomor Telepon / Layanan</label>
+              <input type="text" name="no_telepon" placeholder="Contoh: (0265) 771000" value="<?= htmlspecialchars($_POST['no_telepon'] ?? '') ?>">
             </div>
             <div class="form-group">
               <label>Jam Buka</label>
@@ -186,30 +194,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   <input type="checkbox" name="wifi" id="wifiSwitch" <?= isset($_POST['wifi']) ? 'checked' : '' ?>>
                   <span class="switch-slider"></span>
                 </div>
-                <span>Tersedia WiFi</span>
+                <span style="font-size:13px;font-weight:600;color:var(--text-main);">Tersedia Fasilitas WiFi Publik / Gratis</span>
               </label>
             </div>
           </div>
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-primary btn-lg"><i class="fas fa-save"></i> Simpan Destinasi</button>
-          <a href="/ulinkaciamis/admin/kelola.php" class="btn-ghost">Batal</a>
+          <button type="submit" class="btn-primary btn-lg"><i class="fas fa-floppy-disk"></i> Simpan Destinasi</button>
+          <a href="/ulinkaciamis/admin/kelola.php" class="btn-secondary">Batal</a>
         </div>
 
       </form>
     </div>
+
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const pickMap = L.map('pickMap', { center: [-7.3258, 108.3532], zoom: 14 });
-// Google Maps Roadmap: Full Indonesian street labels, POIs, Alun-Alun Ciamis & building footprints
-L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'], attribution: '&copy; Google Maps' }, {
-  attribution: '&copy; Google Maps',
-  maxZoom: 20
+const pickMap = L.map('pickMap', { center: [-7.326694, 108.353192], zoom: 14 });
+L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+  maxZoom: 20,
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+  attribution: '&copy; Google Maps'
 }).addTo(pickMap);
+
+const inputLat = document.getElementById('inputLat');
+const inputLng = document.getElementById('inputLng');
+let pickMarker = null;
 
 function jumpTo(lat, lng, name) {
   pickMap.setView([lat, lng], 16);
@@ -219,11 +232,6 @@ function jumpTo(lat, lng, name) {
   else pickMarker = L.marker([lat, lng]).addTo(pickMap);
 }
 
-let pickMarker = null;
-const inputLat = document.getElementById('inputLat');
-const inputLng = document.getElementById('inputLng');
-
-// Init marker if values exist
 const initLat = parseFloat(inputLat.value);
 const initLng = parseFloat(inputLng.value);
 if (!isNaN(initLat) && !isNaN(initLng)) {
@@ -239,7 +247,6 @@ pickMap.on('click', e => {
   else pickMarker = L.marker(e.latlng).addTo(pickMap);
 });
 
-// Manual input sync
 [inputLat, inputLng].forEach(el => {
   el.addEventListener('change', () => {
     const lat = parseFloat(inputLat.value);

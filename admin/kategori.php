@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? 'tambah';
     $nama   = trim($_POST['nama'] ?? '');
     $slug   = trim($_POST['slug'] ?? '');
-    $warna  = trim($_POST['warna'] ?? '#3B82F6');
+    $warna  = trim($_POST['warna'] ?? '#7a0d66');
     $urutan = (int)($_POST['urutan'] ?? 0);
 
     if (empty($slug) && !empty($nama)) {
@@ -74,8 +74,10 @@ $categories = $db->query("
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kelola Kategori - UlinKa Ciamis</title>
+<link rel="icon" type="image/png" href="/ulinkaciamis/assets/images/lambang_ciamis.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link rel="stylesheet" href="/ulinkaciamis/assets/css/admin.css">
 </head>
@@ -84,122 +86,170 @@ $categories = $db->query("
 <div class="admin-main">
   <?php include 'partials/topbar.php'; ?>
   <div class="admin-content">
+
     <div class="page-header">
       <div>
-        <h1 class="page-title">Kelola Kategori Fasilitas & Wisata</h1>
-        <p class="page-sub">Atur kategori destinasi dan fasilitas di wilayah Ciamis</p>
+        <h1 class="page-title">Kelola Kategori Wisata &amp; Fasilitas</h1>
+        <p class="page-sub">Kelola klasifikasi destinasi untuk penyaringan di direktori dan peta publik Tatar Galuh</p>
       </div>
-      <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Kategori</button>
+      <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Kategori Baru</button>
     </div>
 
-    <?php if($msg): ?><div class="alert alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($msg) ?></div><?php endif; ?>
-    <?php if($error): ?><div class="alert alert-error"><i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($error) ?></div><?php endif; ?>
+    <?php if($msg): ?><div class="alert alert-success"><i class="fas fa-circle-check"></i> <?= htmlspecialchars($msg) ?></div><?php endif; ?>
+    <?php if($error): ?><div class="alert alert-error"><i class="fas fa-triangle-exclamation"></i> <?= htmlspecialchars($error) ?></div><?php endif; ?>
 
     <div class="table-card">
       <div class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>Urutan</th>
+              <th style="width:40px;">No</th>
               <th>Nama Kategori</th>
-              <th>Slug / Kode</th>
-              <th>Warna Badge</th>
-              <th>Jumlah Tempat</th>
-              <th style="text-align:right">Aksi</th>
+              <th>Slug Sistem</th>
+              <th>Warna Label</th>
+              <th>Urutan</th>
+              <th>Total Destinasi</th>
+              <th style="text-align:right;">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach($categories as $c): ?>
-            <tr>
-              <td><span class="badge" style="background:rgba(255,255,255,.05);color:#94a3b8">#<?= $c['urutan'] ?></span></td>
-              <td><strong><?= htmlspecialchars($c['nama']) ?></strong></td>
-              <td><code><?= htmlspecialchars($c['slug']) ?></code></td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:<?= htmlspecialchars($c['warna']?:'#3b82f6') ?>;border:1px solid rgba(255,255,255,.2)"></span>
-                  <span style="font-size:12px;color:#94a3b8"><?= htmlspecialchars($c['warna']?:'#3b82f6') ?></span>
-                </div>
-              </td>
-              <td><span class="badge badge-active"><?= $c['total_destinasi'] ?> tempat</span></td>
-              <td style="text-align:right">
-                <button class="btn-sm btn-edit" onclick="editKat(<?= htmlspecialchars(json_encode($c)) ?>)"><i class="fas fa-pencil"></i></button>
-                <?php if($c['total_destinasi'] == 0): ?>
-                <a href="?hapus=<?= $c['id'] ?>" class="btn-sm btn-delete" onclick="return confirm('Hapus kategori <?= htmlspecialchars($c['nama']) ?>?')"><i class="fas fa-trash"></i></a>
-                <?php endif; ?>
-              </td>
-            </tr>
-            <?php endforeach; ?>
+          <?php foreach ($categories as $index => $cat): ?>
+          <tr>
+            <td style="color:var(--text-muted);font-weight:600;font-size:12px;"><?= $index + 1 ?></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:<?= htmlspecialchars($cat['warna']) ?>;box-shadow:0 0 0 2px rgba(0,0,0,0.06);"></span>
+                <strong style="color:var(--text-main);font-size:13.5px;"><?= htmlspecialchars($cat['nama']) ?></strong>
+              </div>
+            </td>
+            <td>
+              <code style="background:#f1f5f9;padding:3px 7px;border-radius:4px;font-size:12px;color:var(--text-body);border:1px solid var(--border);">
+                <?= htmlspecialchars($cat['slug']) ?>
+              </code>
+            </td>
+            <td>
+              <span class="badge" style="background:<?= htmlspecialchars($cat['warna']) ?>18;color:<?= htmlspecialchars($cat['warna']) ?>;border:1px solid <?= htmlspecialchars($cat['warna']) ?>40;">
+                <?= htmlspecialchars($cat['warna']) ?>
+              </span>
+            </td>
+            <td><span style="font-weight:600;color:var(--text-body);"><?= (int)$cat['urutan'] ?></span></td>
+            <td>
+              <a href="/ulinkaciamis/admin/kelola.php?kat=<?= $cat['id'] ?>" class="badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;text-decoration:none;">
+                <i class="fas fa-map-pin" style="font-size:10px;"></i> <?= $cat['total_destinasi'] ?> Tempat
+              </a>
+            </td>
+            <td style="text-align:right;">
+              <div class="tbl-actions" style="justify-content:flex-end;">
+                <button class="tbl-btn edit" title="Edit Kategori" onclick='openEditModal(<?= json_encode($cat) ?>)'><i class="fas fa-pen-to-square"></i></button>
+                <a href="/ulinkaciamis/admin/kategori.php?hapus=<?= $cat['id'] ?>" class="tbl-btn del" title="Hapus Kategori" onclick="return confirm('Hapus kategori <?= addslashes(htmlspecialchars($cat['nama'])) ?>?')"><i class="fas fa-trash-can"></i></a>
+              </div>
+            </td>
+          </tr>
+          <?php endforeach; ?>
           </tbody>
         </table>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- Modal Form -->
-<div id="katModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;">
-  <div style="background:#131B2E;border:1px solid rgba(255,255,255,.1);border-radius:16px;width:90%;max-width:480px;padding:24px;">
-    <h3 id="modalTitle" style="margin-top:0;margin-bottom:16px;font-size:18px">Tambah Kategori</h3>
-    <form method="POST" id="katForm">
-      <input type="hidden" name="action" id="formAction" value="tambah">
-      <input type="hidden" name="id" id="formId" value="">
-      
-      <div class="form-group" style="margin-bottom:14px">
-        <label>Nama Kategori <span class="req">*</span></label>
-        <input type="text" name="nama" id="formNama" placeholder="cth: Minimarket" required style="width:100%;box-sizing:border-box">
-      </div>
-      <div class="form-group" style="margin-bottom:14px">
-        <label>Slug URL / Kode <span class="req">*</span></label>
-        <input type="text" name="slug" id="formSlug" placeholder="cth: minimarket" required style="width:100%;box-sizing:border-box">
-      </div>
-      <div class="form-group" style="margin-bottom:14px">
-        <label>Warna Tema</label>
-        <input type="color" name="warna" id="formWarna" value="#3B82F6" style="width:100%;height:40px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer">
-      </div>
-      <div class="form-group" style="margin-bottom:20px">
-        <label>Nomor Urutan</label>
-        <input type="number" name="urutan" id="formUrutan" value="1" style="width:100%;box-sizing:border-box">
-      </div>
+<!-- MODAL FORM -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Tambah Kategori</h3>
+      <button type="button" class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <form method="POST">
+      <div class="modal-body">
+        <input type="hidden" name="action" id="formAction" value="tambah">
+        <input type="hidden" name="id" id="catId" value="">
 
-      <div style="display:flex;justify-content:flex-end;gap:10px">
-        <button type="button" class="btn-ghost" onclick="closeModal()">Batal</button>
-        <button type="submit" class="btn-primary" id="btnSubmitModal">Simpan</button>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>Nama Kategori <span class="req">*</span></label>
+          <input type="text" name="nama" id="catNama" placeholder="Contoh: Wisata Religi & Budaya" required oninput="autoSlug(this.value)">
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>Slug URL <span class="req">*</span></label>
+          <input type="text" name="slug" id="catSlug" placeholder="cth: wisata-religi-budaya" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="form-group">
+            <label>Warna Aksen</label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="color" name="warna" id="catWarna" value="#7a0d66" style="width:42px;height:38px;padding:2px;cursor:pointer;border-radius:6px;border:1px solid var(--border-strong);">
+              <input type="text" id="catWarnaText" value="#7a0d66" style="flex:1;" oninput="document.getElementById('catWarna').value=this.value">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Urutan Tampil</label>
+            <input type="number" name="urutan" id="catUrutan" value="0" min="0" style="padding:9px 13px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);outline:none;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn-primary" id="btnSubmit"><i class="fas fa-floppy-disk"></i> Simpan Kategori</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
+const modal = document.getElementById('catModal');
+const catWarna = document.getElementById('catWarna');
+const catWarnaText = document.getElementById('catWarnaText');
+
+catWarna.addEventListener('input', e => {
+  catWarnaText.value = e.target.value;
+});
+
 function openAddModal() {
-  document.getElementById('modalTitle').textContent = 'Tambah Kategori';
+  document.getElementById('modalTitle').textContent = 'Tambah Kategori Baru';
   document.getElementById('formAction').value = 'tambah';
-  document.getElementById('formId').value = '';
-  document.getElementById('formNama').value = '';
-  document.getElementById('formSlug').value = '';
-  document.getElementById('formWarna').value = '#3B82F6';
-  document.getElementById('formUrutan').value = '1';
-  document.getElementById('katModal').style.display = 'flex';
+  document.getElementById('catId').value = '';
+  document.getElementById('catNama').value = '';
+  document.getElementById('catSlug').value = '';
+  document.getElementById('catWarna').value = '#7a0d66';
+  document.getElementById('catWarnaText').value = '#7a0d66';
+  document.getElementById('catUrutan').value = '0';
+  document.getElementById('btnSubmit').innerHTML = '<i class="fas fa-floppy-disk"></i> Simpan Kategori';
+  modal.classList.add('open');
 }
 
-function editKat(item) {
-  document.getElementById('modalTitle').textContent = 'Edit Kategori';
+function openEditModal(cat) {
+  document.getElementById('modalTitle').textContent = 'Edit Kategori: ' + cat.nama;
   document.getElementById('formAction').value = 'edit';
-  document.getElementById('formId').value = item.id;
-  document.getElementById('formNama').value = item.nama;
-  document.getElementById('formSlug').value = item.slug;
-  document.getElementById('formWarna').value = item.warna || '#3B82F6';
-  document.getElementById('formUrutan').value = item.urutan;
-  document.getElementById('katModal').style.display = 'flex';
+  document.getElementById('catId').value = cat.id;
+  document.getElementById('catNama').value = cat.nama;
+  document.getElementById('catSlug').value = cat.slug;
+  document.getElementById('catWarna').value = cat.warna || '#7a0d66';
+  document.getElementById('catWarnaText').value = cat.warna || '#7a0d66';
+  document.getElementById('catUrutan').value = cat.urutan || '0';
+  document.getElementById('btnSubmit').innerHTML = '<i class="fas fa-floppy-disk"></i> Simpan Perubahan';
+  modal.classList.add('open');
 }
 
 function closeModal() {
-  document.getElementById('katModal').style.display = 'none';
+  modal.classList.remove('open');
 }
 
-document.getElementById('formNama').addEventListener('input', function(e) {
+function autoSlug(text) {
   if (document.getElementById('formAction').value === 'tambah') {
-    document.getElementById('formSlug').value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    document.getElementById('catSlug').value = text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
+}
+
+modal.addEventListener('click', e => {
+  if (e.target === modal) closeModal();
 });
 </script>
 </body>

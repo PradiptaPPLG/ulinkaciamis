@@ -50,9 +50,11 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kelola Destinasi - UlinKa Ciamis</title>
+<title>Kelola Data Destinasi - UlinKa Ciamis</title>
+<link rel="icon" type="image/png" href="/ulinkaciamis/assets/images/lambang_ciamis.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link rel="stylesheet" href="/ulinkaciamis/assets/css/admin.css">
 </head>
@@ -61,30 +63,32 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
 <div class="admin-main">
   <?php include 'partials/topbar.php'; ?>
   <div class="admin-content">
+
     <div class="page-header">
       <div>
-        <h1 class="page-title">Kelola Destinasi</h1>
-        <p class="page-sub">Total <?= $total ?> destinasi ditemukan</p>
+        <h1 class="page-title">Kelola Destinasi &amp; Fasilitas</h1>
+        <p class="page-sub">Menampilkan total <strong><?= $total ?> destinasi</strong> terdaftar di Tatar Galuh Ciamis</p>
       </div>
-      <a href="/ulinkaciamis/admin/tambah.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah Baru</a>
+      <a href="/ulinkaciamis/admin/tambah.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah Destinasi Baru</a>
     </div>
 
     <?php if(isset($_GET['deleted'])): ?>
-    <div class="alert alert-success"><i class="fas fa-check-circle"></i> Destinasi berhasil dihapus.</div>
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> Data destinasi berhasil dihapus dari sistem.</div>
     <?php endif; ?>
 
     <?php if(!empty($_SESSION['admin_wilayah'])): ?>
-    <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:10px 16px;margin-bottom:16px;color:#10b981;font-size:13px;display:flex;align-items:center;gap:8px">
-      <i class="fas fa-map-pin"></i> <span>Wilayah Tugas Anda: <strong>Kecamatan <?= htmlspecialchars($_SESSION['admin_wilayah']) ?></strong></span>
+    <div class="alert alert-success" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534;">
+      <i class="fas fa-shield-halved"></i>
+      <span>Wilayah Penugasan: <strong>Kecamatan <?= htmlspecialchars($_SESSION['admin_wilayah']) ?></strong></span>
     </div>
     <?php endif; ?>
 
-    <!-- FILTER -->
+    <!-- FILTER TOOLBAR -->
     <div class="filter-bar">
       <form method="GET" class="filter-form">
         <div class="search-filter">
           <i class="fas fa-search"></i>
-          <input type="text" name="q" placeholder="Cari nama, alamat, atau kecamatan..." value="<?= htmlspecialchars($search) ?>">
+          <input type="text" name="q" placeholder="Cari nama tempat, alamat, atau kecamatan..." value="<?= htmlspecialchars($search) ?>">
         </div>
         <select name="kat">
           <option value="">Semua Kategori</option>
@@ -98,53 +102,82 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
           <option value="<?= $kc ?>" <?= $kec_filter === $kc ? 'selected' : '' ?>>Kec. <?= $kc ?></option>
           <?php endforeach; ?>
         </select>
-        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> Filter</button>
-        <a href="/ulinkaciamis/admin/kelola.php" class="btn-ghost-sm">Reset</a>
+        <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> Terapkan Filter</button>
+        <?php if($search || $kat_filter || $kec_filter): ?>
+        <a href="/ulinkaciamis/admin/kelola.php" class="btn-ghost-sm"><i class="fas fa-rotate-left"></i> Reset</a>
+        <?php endif; ?>
       </form>
     </div>
 
-    <!-- TABLE -->
-    <div class="card">
+    <!-- TABLE CARD -->
+    <div class="table-card">
       <div class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Nama Tempat</th>
+              <th style="width:40px;">No</th>
+              <th style="width:50px;">Foto</th>
+              <th>Nama Tempat &amp; Alamat</th>
               <th>Kecamatan</th>
               <th>Kategori</th>
-              <th>WiFi</th>
+              <th>Fasilitas</th>
               <th>Status</th>
-              <th>Ditambahkan</th>
-              <th>Aksi</th>
+              <th>Penginput</th>
+              <th style="text-align:right;">Aksi</th>
             </tr>
           </thead>
           <tbody>
           <?php if(empty($rows)): ?>
-            <tr><td colspan="8" class="text-center" style="padding:40px;color:rgba(255,255,255,.3)">Tidak ada data ditemukan</td></tr>
+            <tr>
+              <td colspan="9" style="text-align:center;padding:48px 20px;color:var(--text-muted);">
+                <i class="fas fa-folder-open" style="font-size:32px;color:var(--text-light);margin-bottom:8px;display:block;"></i>
+                Tidak ada data destinasi yang sesuai kriteria pencarian.
+              </td>
+            </tr>
           <?php endif; ?>
           <?php foreach($rows as $i => $r): ?>
           <tr>
-            <td><?= $offset + $i + 1 ?></td>
+            <td style="color:var(--text-muted);font-weight:600;font-size:12px;"><?= $offset + $i + 1 ?></td>
             <td>
-              <strong><?= htmlspecialchars($r['nama']) ?></strong>
-              <?php if($r['alamat']): ?><br><small style="color:rgba(255,255,255,.4)"><?= htmlspecialchars(mb_strimwidth($r['alamat'],0,40,'...')) ?></small><?php endif; ?>
+              <img src="<?= htmlspecialchars($r['foto'] ?: '/ulinkaciamis/assets/images/alun_alun_ciamis.jpg') ?>" 
+                   alt="<?= htmlspecialchars($r['nama']) ?>" 
+                   class="dest-preview-thumb" 
+                   onerror="this.src='/ulinkaciamis/assets/images/alun_alun_ciamis.jpg'" />
             </td>
-            <td><span class="badge" style="background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3)">Kec. <?= htmlspecialchars($r['kecamatan'] ?? 'Ciamis') ?></span></td>
-            <td><span class="badge-cat"><?= htmlspecialchars($r['kat_nama']) ?></span></td>
-            <td><?= $r['wifi'] ? '<span class="badge-wifi">📶 Ada</span>' : '<span style="color:rgba(255,255,255,.25)">—</span>' ?></td>
             <td>
-              <?php if($r['status']==='aktif'): ?>
-                <span class="badge-status active">Aktif</span>
-              <?php else: ?>
-                <span class="badge-status inactive">Nonaktif</span>
+              <div style="font-weight:700;color:var(--text-main);font-size:13.5px;"><?= htmlspecialchars($r['nama']) ?></div>
+              <?php if($r['alamat']): ?>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+                  <?= htmlspecialchars(mb_strimwidth($r['alamat'], 0, 48, '...')) ?>
+                </div>
               <?php endif; ?>
             </td>
-            <td><small style="color:rgba(255,255,255,.4)"><?= htmlspecialchars($r['ditambahkan_oleh'] ?? '—') ?></small></td>
             <td>
-              <div class="tbl-actions">
-                <a href="/ulinkaciamis/admin/edit.php?id=<?= $r['id'] ?>" class="tbl-btn edit" title="Edit"><i class="fas fa-pen"></i></a>
-                <a href="/ulinkaciamis/admin/kelola.php?hapus=<?= $r['id'] ?>" class="tbl-btn del" title="Hapus" onclick="return confirm('Hapus <?= addslashes(htmlspecialchars($r['nama'])) ?>?')"><i class="fas fa-trash"></i></a>
+              <span class="badge" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;">
+                Kec. <?= htmlspecialchars($r['kecamatan'] ?? 'Ciamis') ?>
+              </span>
+            </td>
+            <td><span class="badge-cat"><?= htmlspecialchars($r['kat_nama']) ?></span></td>
+            <td>
+              <?= $r['wifi'] ? '<span class="badge-wifi"><i class="fas fa-wifi"></i> WiFi</span>' : '<span style="color:var(--text-light);font-size:12px;">—</span>' ?>
+            </td>
+            <td>
+              <?php if($r['status']==='aktif'): ?>
+                <span class="badge-status active"><i class="fas fa-circle" style="font-size:7px;"></i> Aktif</span>
+              <?php else: ?>
+                <span class="badge-status inactive"><i class="fas fa-circle" style="font-size:7px;"></i> Nonaktif</span>
+              <?php endif; ?>
+            </td>
+            <td>
+              <span style="font-size:12px;color:var(--text-muted);">
+                <?= htmlspecialchars($r['ditambahkan_oleh'] ?? 'Admin') ?>
+              </span>
+            </td>
+            <td style="text-align:right;">
+              <div class="tbl-actions" style="justify-content:flex-end;">
+                <a href="/ulinkaciamis/admin/edit.php?id=<?= $r['id'] ?>" class="tbl-btn edit" title="Edit Data"><i class="fas fa-pen-to-square"></i></a>
+                <a href="/ulinkaciamis/?q=<?= urlencode($r['nama']) ?>" target="_blank" class="tbl-btn view" title="Lihat di Peta"><i class="fas fa-map-pin"></i></a>
+                <a href="/ulinkaciamis/admin/kelola.php?hapus=<?= $r['id'] ?>" class="tbl-btn del" title="Hapus Destinasi" onclick="return confirm('Apakah Anda yakin ingin menghapus destinasi: <?= addslashes(htmlspecialchars($r['nama'])) ?>?')"><i class="fas fa-trash-can"></i></a>
               </div>
             </td>
           </tr>
@@ -156,12 +189,16 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
       <!-- PAGINATION -->
       <?php if($pages > 1): ?>
       <div class="pagination">
+        <span style="margin-right:auto;font-size:12.5px;color:var(--text-muted);">
+          Halaman <strong><?= $page ?></strong> dari <strong><?= $pages ?></strong> (Total <?= $total ?> data)
+        </span>
         <?php for($i=1;$i<=$pages;$i++): ?>
-        <a href="?p=<?= $i ?>&q=<?= urlencode($search) ?>&kat=<?= $kat_filter ?>" class="page-btn <?= $i==$page?'active':'' ?>"><?= $i ?></a>
+        <a href="?p=<?= $i ?>&q=<?= urlencode($search) ?>&kat=<?= $kat_filter ?>&kec=<?= urlencode($kec_filter) ?>" class="page-btn <?= $i==$page?'active':'' ?>"><?= $i ?></a>
         <?php endfor; ?>
       </div>
       <?php endif; ?>
     </div>
+
   </div>
 </div>
 </body>

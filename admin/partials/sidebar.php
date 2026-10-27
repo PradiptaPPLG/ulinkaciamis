@@ -5,40 +5,55 @@ function navActive($pages, $current) {
 }
 ?>
 <aside class="admin-sidebar">
-    <div class="sidebar-brand" style="display:flex;align-items:center;gap:10px;padding:16px 20px;">
-    <img src="/ulinkaciamis/public/images/ulinkaCiamis_cropped.webp" alt="UlinKa Ciamis" style="height:34px;width:auto;object-fit:contain;" />
-  </div>
+  <div class="sidebar-brand">
+    <div style="width:36px; height:36px; min-width:36px; background:#ffffff; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:3px; box-shadow:0 1px 3px rgba(0,0,0,0.2); flex-shrink:0;">
+      <img src="/ulinkaciamis/assets/images/lambang_ciamis.png" alt="Lambang Kab. Ciamis" style="width:100%; height:100%; object-fit:contain; display:block;" />
+    </div>
+    <div class="sidebar-brand-text">
+      <span class="sidebar-brand-name">UlinKa Ciamis</span>
+      <span class="sidebar-brand-sub">Portal Administrator</span>
+    </div>
   </div>
 
   <nav class="sidebar-nav">
-    <div class="nav-group-label">Utama</div>
+    <div class="nav-group-label">Menu Utama</div>
     <a href="/ulinkaciamis/admin/dashboard.php" class="nav-item <?= navActive('dashboard.php', $current_page) ?>">
-      <i class="fas fa-gauge-high"></i> Dashboard
-    </a>
-    <a href="/ulinkaciamis/admin/kelola.php" class="nav-item <?= navActive(['kelola.php','edit.php'], $current_page) ?>">
-      <i class="fas fa-list-ul"></i> Kelola Destinasi
-    </a>
-    <a href="/ulinkaciamis/admin/tambah.php" class="nav-item <?= navActive('tambah.php', $current_page) ?>">
-      <i class="fas fa-plus-circle"></i> Tambah Destinasi
-    </a>
-    <a href="/ulinkaciamis/admin/kategori.php" class="nav-item <?= navActive('kategori.php', $current_page) ?>">
-      <i class="fas fa-tags"></i> Kelola Kategori
+      <i class="fas fa-chart-pie"></i>
+      <span>Dashboard</span>
     </a>
 
-    <div class="nav-group-label" style="margin-top:16px">Lainnya</div>
-    <a href="/ulinkaciamis/" class="nav-item" target="_blank">
-      <i class="fas fa-map"></i> Lihat Peta Publik
+    <div class="nav-group-label" style="margin-top:14px">Manajemen Destinasi</div>
+    <a href="/ulinkaciamis/admin/kelola.php" class="nav-item <?= navActive(['kelola.php','edit.php'], $current_page) ?>">
+      <i class="fas fa-map-location-dot"></i>
+      <span>Data Destinasi</span>
     </a>
-    <a href="/ulinkaciamis/admin/logout.php" class="nav-item nav-logout">
-      <i class="fas fa-right-from-bracket"></i> Keluar
+    <a href="/ulinkaciamis/admin/tambah.php" class="nav-item <?= navActive('tambah.php', $current_page) ?>">
+      <i class="fas fa-circle-plus"></i>
+      <span>Tambah Destinasi</span>
+    </a>
+    <a href="/ulinkaciamis/admin/kategori.php" class="nav-item <?= navActive('kategori.php', $current_page) ?>">
+      <i class="fas fa-tags"></i>
+      <span>Kategori Wisata</span>
+    </a>
+
+    <div class="nav-group-label" style="margin-top:14px">Sistem &amp; Tautan</div>
+    <a href="/ulinkaciamis/" class="nav-item" target="_blank">
+      <i class="fas fa-arrow-up-right-from-square"></i>
+      <span>Lihat Peta Publik</span>
+    </a>
+    <a href="/ulinkaciamis/admin/logout.php" class="nav-item text-danger" onclick="return confirm('Apakah Anda yakin ingin keluar?')">
+      <i class="fas fa-arrow-right-from-bracket"></i>
+      <span>Keluar Sesi</span>
     </a>
   </nav>
 
   <div class="sidebar-user">
-    <div class="user-avatar"><?= strtoupper(substr($_SESSION['admin_nama']??'A',0,1)) ?></div>
+    <div class="user-avatar-circle">
+      <?= strtoupper(substr($_SESSION['admin_user']['nama_lengkap'] ?? 'A', 0, 1)) ?>
+    </div>
     <div class="user-info">
-      <div class="user-name"><?= htmlspecialchars($_SESSION['admin_nama']??'Admin') ?></div>
-      <div class="user-role"><?= ($_SESSION['admin_role']??'')==='superadmin' ? '⭐ Super Admin Kabupaten' : '🏘️ Pengurus ' . htmlspecialchars($_SESSION['admin_wilayah'] ?? 'Wilayah') ?></div>
+      <div class="user-name"><?= htmlspecialchars($_SESSION['admin_user']['nama_lengkap'] ?? 'Administrator') ?></div>
+      <div class="user-role"><?= htmlspecialchars($_SESSION['admin_user']['role_label'] ?? 'Admin') ?></div>
     </div>
   </div>
 </aside>
