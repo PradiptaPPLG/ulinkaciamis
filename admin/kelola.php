@@ -3,8 +3,34 @@ require_once __DIR__ . '/../config.php';
 requireLogin();
 
 $db = getDB();
+
+// Identifikasi Peran & Wilayah
+$user_role    = $_SESSION['admin_role'] ?? 'pengurus_wilayah';
+$user_wilayah = $_SESSION['admin_wilayah'] ?? '';
+$is_regional  = ($user_role !== 'superadmin' && !empty($user_wilayah) && $user_wilayah !== 'Seluruh Kabupaten Ciamis');
+
+// Handle delete
+if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
+    $del_id = (int)$_GET['hapus'];
+    // Validasi wewenang penghapusan
+    if ($is_regional) {
+        $del_chk = $db->prepare("SELECT kecamatan FROM destinasi WHERE id=?");
+        $del_chk->bind_param('i', $del_id);
+        $del_chk->execute();
+        $target_kec = $del_chk->get_result()->fetch_assoc()['kecamatan'] ?? '';
+        if ($target_kec !== $user_wilayah) {
+            die("Akses ditolak: Anda tidak memiliki hak menghapus data di luar wilayah " . htmlspecialchars($user_wilayah));
+        }
+    }
+    $del = $db->prepare("DELETE FROM destinasi WHERE id=?");
+    $del->bind_param('i', $del_id);
+    $del->execute();
+    header('Location: /ulinkaciamis/admin/kelola.php?deleted=1');
+    exit;
+}
+
 $kat_filter = (int)($_GET['kat'] ?? 0);
-$kec_filter = trim($_GET['kec'] ?? '');
+$kec_filter = $is_regional ? $user_wilayah : trim($_GET['kec'] ?? '');
 $search     = trim($_GET['q'] ?? '');
 $page       = max(1, (int)($_GET['p'] ?? 1));
 $per_page   = 15;
@@ -12,18 +38,38 @@ $offset     = ($page - 1) * $per_page;
 
 $where = "WHERE 1=1";
 $params = []; $types = '';
-if ($kat_filter > 0) { $where .= " AND d.kategori_id=?"; $types .= 'i'; $params[] = $kat_filter; }
-if (!empty($kec_filter)) { $where .= " AND d.kecamatan=?"; $types .= 's'; $params[] = $kec_filter; }
+
+// Kunci Kecamatan jika Staf Daerah
+if ($is_regional) {
+    $where .= " AND d.kecamatan=?";
+    $types .= 's';
+    $params[] = $user_wilayah;
+} elseif (!empty($kec_filter)) {
+    $where .= " AND d.kecamatan=?";
+    $types .= 's';
+    $params[] = $kec_filter;
+}
+
+if ($kat_filter > 0) { 
+    $where .= " AND d.kategori_id=?"; 
+    $types .= 'i'; 
+    $params[] = $kat_filter; 
+}
+
 if (!empty($search)) {
-    $where .= " AND (d.nama LIKE ? OR d.alamat LIKE ? OR d.kecamatan LIKE ?)";
-    $types .= 'sss'; $like = "%$search%"; $params[] = $like; $params[] = $like; $params[] = $like;
+    $where .= " AND (d.nama LIKE ? OR d.alamat LIKE ? OR d.deskripsi LIKE ?)";
+    $types .= 'sss'; 
+    $like = "%$search%"; 
+    $params[] = $like; 
+    $params[] = $like; 
+    $params[] = $like;
 }
 
 $count_stmt = $db->prepare("SELECT COUNT(*) as c FROM destinasi d $where");
 if ($params) $count_stmt->bind_param($types, ...$params);
 $count_stmt->execute();
 $total = $count_stmt->get_result()->fetch_assoc()['c'];
-$pages = ceil($total / $per_page);
+$pages = max(1, ceil($total / $per_page));
 
 $sql = "SELECT d.*, k.nama AS kat_nama FROM destinasi d JOIN kategori k ON d.kategori_id=k.id $where ORDER BY d.id DESC LIMIT ? OFFSET ?";
 $all_params = array_merge($params, [$per_page, $offset]);
@@ -35,15 +81,6 @@ $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
 $kategori_list = $db->query("SELECT id, nama FROM kategori ORDER BY urutan ASC")->fetch_all(MYSQLI_ASSOC);
 $kecamatan_list = ['Ciamis', 'Panjalu', 'Kawali', 'Sadananya', 'Cikoneng', 'Sindangkasih', 'Rancah', 'Cijeungjing', 'Panumbangan', 'Baregbeg', 'Rajadesa', 'Banjaranyar', 'Pamarican', 'Banjarsari', 'Cipaku', 'Lumbung', 'Jatinagara', 'Sukadana', 'Cisaga', 'Tambaksari', 'Sukamantri', 'Cidolog', 'Cimaragas', 'Lakbok', 'Purwadadi', 'Mangunjaya'];
-
-// Handle delete
-if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
-    $del = $db->prepare("DELETE FROM destinasi WHERE id=?");
-    $del->bind_param('i', $_GET['hapus']);
-    $del->execute();
-    header('Location: /ulinkaciamis/admin/kelola.php?deleted=1');
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -67,7 +104,13 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
     <div class="page-header">
       <div>
         <h1 class="page-title">Kelola Destinasi &amp; Fasilitas</h1>
-        <p class="page-sub">Menampilkan total <strong><?= $total ?> destinasi</strong> terdaftar di Tatar Galuh Ciamis</p>
+        <p class="page-sub">
+          <?php if($is_regional): ?>
+            Menampilkan <strong><?= $total ?> destinasi / fasilitas</strong> terdaftar di wilayah tugas Anda (<strong>Kecamatan <?= htmlspecialchars($user_wilayah) ?></strong>)
+          <?php else: ?>
+            Menampilkan total <strong><?= $total ?> destinasi / fasilitas</strong> terdaftar di seluruh 27 Kecamatan Tatar Galuh Ciamis
+          <?php endif; ?>
+        </p>
       </div>
       <a href="/ulinkaciamis/admin/tambah.php" class="btn-primary"><i class="fas fa-plus"></i> Tambah Destinasi Baru</a>
     </div>
@@ -76,10 +119,13 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
     <div class="alert alert-success"><i class="fas fa-check-circle"></i> Data destinasi berhasil dihapus dari sistem.</div>
     <?php endif; ?>
 
-    <?php if(!empty($_SESSION['admin_wilayah'])): ?>
-    <div class="alert alert-success" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534;">
-      <i class="fas fa-shield-halved"></i>
-      <span>Wilayah Penugasan: <strong>Kecamatan <?= htmlspecialchars($_SESSION['admin_wilayah']) ?></strong></span>
+    <?php if($is_regional): ?>
+    <div class="alert alert-success" style="background:#f0fdf4;border-color:#bbf7d0;color:#166534;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <i class="fas fa-shield-halved" style="font-size:18px;"></i>
+        <span>Hak Akses Terkunci: <strong>Staff Wilayah Kecamatan <?= htmlspecialchars($user_wilayah) ?></strong> (Hanya mengelola data di wilayah Anda)</span>
+      </div>
+      <span style="font-size:11.5px;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:6px;font-weight:700;"><i class="fas fa-lock"></i> Otoritas Khusus</span>
     </div>
     <?php endif; ?>
 
@@ -88,7 +134,7 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
       <form method="GET" class="filter-form">
         <div class="search-filter">
           <i class="fas fa-search"></i>
-          <input type="text" name="q" placeholder="Cari nama tempat, alamat, atau kecamatan..." value="<?= htmlspecialchars($search) ?>">
+          <input type="text" name="q" placeholder="Cari nama tempat, sekolah, minimarket, bengkel..." value="<?= htmlspecialchars($search) ?>">
         </div>
         <select name="kat">
           <option value="">Semua Kategori</option>
@@ -96,14 +142,22 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
           <option value="<?= $k['id'] ?>" <?= $kat_filter == $k['id'] ? 'selected' : '' ?>><?= htmlspecialchars($k['nama']) ?></option>
           <?php endforeach; ?>
         </select>
-        <select name="kec">
-          <option value="">Semua Kecamatan</option>
-          <?php foreach($kecamatan_list as $kc): ?>
-          <option value="<?= $kc ?>" <?= $kec_filter === $kc ? 'selected' : '' ?>>Kec. <?= $kc ?></option>
-          <?php endforeach; ?>
-        </select>
+        
+        <?php if($is_regional): ?>
+          <select name="kec" disabled style="background:#f1f5f9;cursor:not-allowed;">
+            <option value="<?= htmlspecialchars($user_wilayah) ?>" selected>Kec. <?= htmlspecialchars($user_wilayah) ?> (Terkunci)</option>
+          </select>
+        <?php else: ?>
+          <select name="kec">
+            <option value="">Semua Kecamatan (27)</option>
+            <?php foreach($kecamatan_list as $kc): ?>
+            <option value="<?= $kc ?>" <?= $kec_filter === $kc ? 'selected' : '' ?>>Kec. <?= $kc ?></option>
+            <?php endforeach; ?>
+          </select>
+        <?php endif; ?>
+
         <button type="submit" class="btn-filter"><i class="fas fa-filter"></i> Terapkan Filter</button>
-        <?php if($search || $kat_filter || $kec_filter): ?>
+        <?php if($search || $kat_filter || (!$is_regional && $kec_filter)): ?>
         <a href="/ulinkaciamis/admin/kelola.php" class="btn-ghost-sm"><i class="fas fa-rotate-left"></i> Reset</a>
         <?php endif; ?>
       </form>
@@ -131,7 +185,7 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
             <tr>
               <td colspan="9" style="text-align:center;padding:48px 20px;color:var(--text-muted);">
                 <i class="fas fa-folder-open" style="font-size:32px;color:var(--text-light);margin-bottom:8px;display:block;"></i>
-                Tidak ada data destinasi yang sesuai kriteria pencarian.
+                Tidak ada data destinasi yang ditemukan di wilayah ini.
               </td>
             </tr>
           <?php endif; ?>
@@ -148,7 +202,7 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
               <div style="font-weight:700;color:var(--text-main);font-size:13.5px;"><?= htmlspecialchars($r['nama']) ?></div>
               <?php if($r['alamat']): ?>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
-                  <?= htmlspecialchars(mb_strimwidth($r['alamat'], 0, 48, '...')) ?>
+                  <?= htmlspecialchars(mb_strimwidth($r['alamat'], 0, 52, '...')) ?>
                 </div>
               <?php endif; ?>
             </td>
@@ -159,7 +213,7 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
             </td>
             <td><span class="badge-cat"><?= htmlspecialchars($r['kat_nama']) ?></span></td>
             <td>
-              <?= $r['wifi'] ? '<span class="badge-wifi"><i class="fas fa-wifi"></i> WiFi</span>' : '<span style="color:var(--text-light);font-size:12px;">—</span>' ?>
+              <?= $r['wifi'] ? '<span class="badge-wifi"><i class="fas fa-wifi"></i> WiFi</span>' : '<span style="color:var(--text-light);font-size:12px;">-</span>' ?>
             </td>
             <td>
               <?php if($r['status']==='aktif'): ?>
@@ -177,7 +231,7 @@ if (isset($_GET['hapus']) && is_numeric($_GET['hapus'])) {
               <div class="tbl-actions" style="justify-content:flex-end;">
                 <a href="/ulinkaciamis/admin/edit.php?id=<?= $r['id'] ?>" class="tbl-btn edit" title="Edit Data"><i class="fas fa-pen-to-square"></i></a>
                 <a href="/ulinkaciamis/?q=<?= urlencode($r['nama']) ?>" target="_blank" class="tbl-btn view" title="Lihat di Peta"><i class="fas fa-map-pin"></i></a>
-                <a href="/ulinkaciamis/admin/kelola.php?hapus=<?= $r['id'] ?>" class="tbl-btn del" title="Hapus Destinasi" onclick="return confirm('Apakah Anda yakin ingin menghapus destinasi: <?= addslashes(htmlspecialchars($r['nama'])) ?>?')"><i class="fas fa-trash-can"></i></a>
+                <a href="/ulinkaciamis/admin/kelola.php?hapus=<?= $r['id'] ?>" class="tbl-btn del" title="Hapus Destinasi" onclick="return confirm('Apakah Anda yakin ingin menghapus: <?= addslashes(htmlspecialchars($r['nama'])) ?>?')"><i class="fas fa-trash-can"></i></a>
               </div>
             </td>
           </tr>

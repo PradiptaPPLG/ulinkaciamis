@@ -617,6 +617,12 @@
             <button onclick="filterMapMarkers('minimarket')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-red-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="minimarket">
               <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> Minimarket
             </button>
+            <button onclick="filterMapMarkers('pendidikan')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-blue-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="pendidikan">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span> Sekolah &amp; SD/TK
+            </button>
+            <button onclick="filterMapMarkers('bengkel')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-orange-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="bengkel">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block"></span> Bengkel
+            </button>
             <button onclick="filterMapMarkers('fasilitas')" class="map-filter-btn px-2.5 py-1.5 rounded-xl text-[11px] font-semibold bg-slate-100 text-slate-600 hover:bg-sky-50 whitespace-nowrap flex items-center gap-1 transition" data-mapcat="fasilitas">
               <span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span> Fasilitas
             </button>
@@ -943,6 +949,10 @@
       transportasi:    { label: "Transportasi", color: "#65a30d", icon: "ph-bus", badgeBg: "bg-lime-50 text-lime-700" },
       'olahraga-gor':  { label: "Olahraga & GOR", color: "#e11d48", icon: "ph-trophy", badgeBg: "bg-rose-50 text-rose-700" },
       'wisata-buatan': { label: "Taman & Kota", color: "#0284c7", icon: "ph-park", badgeBg: "bg-sky-50 text-sky-700" },
+      pendidikan:      { label: "Pendidikan & Sekolah", color: "#2563eb", icon: "ph-graduation-cap", badgeBg: "bg-blue-50 text-blue-700" },
+      bengkel:         { label: "Bengkel & Otomotif", color: "#ea580c", icon: "ph-wrench", badgeBg: "bg-orange-50 text-orange-700" },
+      ibadah:          { label: "Tempat Ibadah", color: "#059669", icon: "ph-mosque", badgeBg: "bg-emerald-50 text-emerald-700" },
+      pemerintahan:    { label: "Pemerintahan & Layanan", color: "#475569", icon: "ph-buildings", badgeBg: "bg-slate-100 text-slate-700" },
       default:         { label: "Fasilitas Publik", color: "#10b981", icon: "ph-map-pin", badgeBg: "bg-emerald-50 text-emerald-700" }
     };
 
@@ -951,6 +961,10 @@
       if (name.includes('alfamart')) return { label: 'Minimarket Alfamart', color: '#dc2626', icon: 'ph-storefront', badgeBg: 'bg-red-50 text-red-700' };
       if (name.includes('indomaret')) return { label: 'Minimarket Indomaret', color: '#0284c7', icon: 'ph-storefront', badgeBg: 'bg-sky-50 text-sky-700' };
       if (name.includes('spbu') || name.includes('pertamina')) return { label: 'SPBU Pertamina', color: '#ea580c', icon: 'ph-gas-pump', badgeBg: 'bg-orange-50 text-orange-700' };
+      if (name.includes('bengkel') || name.includes('ahass') || name.includes('otomotif') || (name.includes('motor') && !name.includes('indomaret') && !name.includes('alfamart'))) return categoryMeta.bengkel;
+      if (name.includes('sd ') || name.includes('sdn') || name.includes('smpn') || name.includes('sman') || name.includes('smkn') || name.includes('tk ') || name.includes('universitas') || name.includes('sekolah') || name.includes('unigal')) return categoryMeta.pendidikan;
+      if (name.includes('puskesmas') || name.includes('apotek') || name.includes('rsud') || name.includes('klinik') || name.includes('rumah sakit')) return categoryMeta.kesehatan;
+      if (name.includes('kantor kecamatan') || name.includes('kantor bupati') || name.includes('dinas perpustakaan')) return categoryMeta.pemerintahan;
       if (name.includes('mixue') || name.includes('momoyo')) return { label: 'Es Krim & Teh', color: '#e11d48', icon: 'ph-ice-cream', badgeBg: 'bg-rose-50 text-rose-700' };
       if (name.includes('curug') || name.includes('sungai') || name.includes('cadas')) return categoryMeta.curug;
       if (name.includes('situ') || name.includes('hutan') || name.includes('puncak')) return categoryMeta['wisata-alam'];
@@ -1108,7 +1122,9 @@
         if (currentMapFilter === 'cafe-kuliner') return (p.category === 'cafe-kuliner' || p.category === 'cafe' || p.category === 'kuliner');
         if (currentMapFilter === 'spbu') return (p.category === 'spbu' || (p.nama && p.nama.toLowerCase().includes('spbu')));
         if (currentMapFilter === 'minimarket') return (p.category === 'minimarket' || (p.nama && p.nama.toLowerCase().includes('alfamart')) || (p.nama && p.nama.toLowerCase().includes('indomaret')));
-        if (currentMapFilter === 'fasilitas') return (p.category === 'kesehatan' || p.category === 'keamanan' || p.category === 'transportasi' || p.category === 'olahraga-gor' || p.category === 'wisata-buatan');
+        if (currentMapFilter === 'pendidikan') return (p.category === 'pendidikan' || (p.nama && (p.nama.toLowerCase().includes('sd ') || p.nama.toLowerCase().includes('sdn') || p.nama.toLowerCase().includes('smpn') || p.nama.toLowerCase().includes('sman') || p.nama.toLowerCase().includes('smkn') || p.nama.toLowerCase().includes('tk ') || p.nama.toLowerCase().includes('sekolah') || p.nama.toLowerCase().includes('unigal'))));
+        if (currentMapFilter === 'bengkel') return (p.category === 'bengkel' || (p.nama && (p.nama.toLowerCase().includes('bengkel') || p.nama.toLowerCase().includes('ahass'))));
+        if (currentMapFilter === 'fasilitas') return (p.category === 'kesehatan' || p.category === 'keamanan' || p.category === 'transportasi' || p.category === 'olahraga-gor' || p.category === 'wisata-buatan' || p.category === 'pemerintahan');
         return p.category === currentMapFilter;
       });
 

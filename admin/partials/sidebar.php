@@ -3,6 +3,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 function navActive($pages, $current) {
     return in_array($current, (array)$pages) ? 'active' : '';
 }
+$disp_name = $_SESSION['admin_user']['nama_lengkap'] ?? $_SESSION['admin_nama'] ?? 'Administrator';
+$disp_role = $_SESSION['admin_user']['role_label'] ?? (!empty($_SESSION['admin_wilayah']) && $_SESSION['admin_wilayah'] !== 'Seluruh Kabupaten Ciamis' ? 'Staff Kec. ' . $_SESSION['admin_wilayah'] : 'Super Administrator');
+$avatar_initial = strtoupper(substr($disp_name, 0, 1));
 ?>
 <aside class="admin-sidebar">
   <div class="sidebar-brand">
@@ -49,11 +52,11 @@ function navActive($pages, $current) {
 
   <div class="sidebar-user">
     <div class="user-avatar-circle">
-      <?= strtoupper(substr($_SESSION['admin_user']['nama_lengkap'] ?? 'A', 0, 1)) ?>
+      <?= $avatar_initial ?>
     </div>
     <div class="user-info">
-      <div class="user-name"><?= htmlspecialchars($_SESSION['admin_user']['nama_lengkap'] ?? 'Administrator') ?></div>
-      <div class="user-role"><?= htmlspecialchars($_SESSION['admin_user']['role_label'] ?? 'Admin') ?></div>
+      <div class="user-name"><?= htmlspecialchars($disp_name) ?></div>
+      <div class="user-role"><?= htmlspecialchars($disp_role) ?></div>
     </div>
   </div>
 </aside>
