@@ -236,23 +236,23 @@
     /* ================= HERO CAROUSEL ================= */
     .hero-carousel-container {
       position: relative;
-      border-radius: 1.5rem;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 15px 30px -10px rgba(74, 5, 63, 0.3);
-      background: #1e021a;
-      height: 240px;
-      min-height: 240px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+      background: #180215;
+      height: 230px;
+      min-height: 230px;
     }
     @media (min-width: 640px) {
       .hero-carousel-container {
-        height: 260px;
-        min-height: 260px;
+        height: 245px;
+        min-height: 245px;
       }
     }
     @media (min-width: 1024px) {
       .hero-carousel-container {
-        height: 275px;
-        min-height: 275px;
+        height: 255px;
+        min-height: 255px;
       }
     }
 
@@ -285,47 +285,47 @@
     }
 
     .hero-slide.active .hero-slide-bg {
-      transform: scale(1.06);
+      transform: scale(1.05);
     }
 
     .hero-gradient-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, rgba(23, 2, 20, 0.94) 0%, rgba(55, 6, 47, 0.85) 45%, rgba(20, 2, 18, 0.58) 75%, rgba(10, 1, 9, 0.35) 100%);
+      background: linear-gradient(90deg, rgba(16, 2, 14, 0.95) 0%, rgba(42, 4, 36, 0.82) 48%, rgba(15, 1, 13, 0.45) 80%, rgba(10, 1, 9, 0.25) 100%);
     }
 
     @media (max-width: 768px) {
       .hero-gradient-overlay {
-        background: linear-gradient(180deg, rgba(20, 2, 18, 0.65) 0%, rgba(40, 4, 34, 0.88) 45%, rgba(15, 1, 13, 0.97) 100%);
+        background: linear-gradient(180deg, rgba(16, 2, 14, 0.5) 0%, rgba(35, 4, 30, 0.85) 50%, rgba(12, 1, 10, 0.95) 100%);
       }
     }
 
     .hero-nav-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 9999px;
-      background: rgba(15, 23, 42, 0.45);
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.55);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       z-index: 20;
     }
     .hero-nav-btn:hover {
-      background: rgba(15, 23, 42, 0.85);
-      border-color: rgba(255, 255, 255, 0.45);
-      transform: scale(1.06);
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: scale(1.05);
     }
 
     .hero-dot-indicator {
-      height: 8px;
-      width: 10px;
-      border-radius: 9999px;
+      height: 4px;
+      width: 18px;
+      border-radius: 2px;
       background: rgba(255, 255, 255, 0.35);
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
@@ -336,7 +336,7 @@
       background: rgba(255, 255, 255, 0.7);
     }
     .hero-dot-indicator.active {
-      width: 32px !important;
+      width: 36px !important;
       background: #fbbf24 !important;
     }
   </style>
@@ -384,7 +384,7 @@
   <div id="tab-beranda" class="tab-content block">
     <!-- Hero Carousel Section -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-5 pb-3">
-      <div id="heroCarousel" class="hero-carousel-container relative text-white border border-[#9e0b84]/30 group" onmouseenter="pauseHeroAutoplay()" onmouseleave="resumeHeroAutoplay()">
+      <div id="heroCarousel" class="hero-carousel-container relative text-white border border-[#9e0b84]/25 group" onmouseenter="pauseHeroAutoplay()" onmouseleave="resumeHeroAutoplay()">
         
         <!-- SLIDE 1: Alun-Alun Ciamis (Aerial View) -->
         <div class="hero-slide active" data-slide-index="0">
@@ -392,10 +392,13 @@
           <div class="hero-gradient-overlay"></div>
           
           <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-white/20 backdrop-blur-md text-pink-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-white/20 shadow-sm">
-              <i class="ph-fill ph-sparkle text-amber-300"></i> Direktori Resmi Tatar Galuh
-            </span>
-            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block w-2.5 h-0.5 bg-amber-400"></span>
+              <span class="text-[11px] font-bold tracking-widest uppercase text-amber-300">
+                Direktori Resmi Tatar Galuh Ciamis
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
               Eksplorasi Wisata, Sejarah Galuh, Kuliner &amp; Fasilitas di Ciamis
             </h2>
             <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
@@ -410,10 +413,13 @@
           <div class="hero-gradient-overlay"></div>
           
           <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-amber-500/25 backdrop-blur-md text-amber-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-amber-400/30 shadow-sm">
-              <i class="ph-fill ph-train text-amber-300"></i> Warisan Sejarah &amp; Ikon Heritage Ciamis
-            </span>
-            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block w-2.5 h-0.5 bg-amber-400"></span>
+              <span class="text-[11px] font-bold tracking-widest uppercase text-amber-300">
+                Cagar Budaya &amp; Ikon Heritage (1893)
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
               Jembatan Cirahong — Saksi Bisu Kejayaan Kereta Api Lembah Galuh
             </h2>
             <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
@@ -428,10 +434,13 @@
           <div class="hero-gradient-overlay"></div>
           
           <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-emerald-500/25 backdrop-blur-md text-emerald-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-emerald-400/30 shadow-sm">
-              <i class="ph-fill ph-drop text-cyan-300"></i> Kesejukan Lereng Gunung Sawal
-            </span>
-            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block w-2.5 h-0.5 bg-emerald-400"></span>
+              <span class="text-[11px] font-bold tracking-widest uppercase text-emerald-300">
+                Kesejukan Lereng Gunung Sawal
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
               Segarnya Ngarai Alami Sungai Cireong &amp; Bebatuan Cadas Ngampar
             </h2>
             <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
@@ -446,10 +455,13 @@
           <div class="hero-gradient-overlay"></div>
           
           <div class="relative z-10 h-full px-6 py-5 sm:px-10 sm:py-7 flex flex-col justify-center max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-fuchsia-500/25 backdrop-blur-md text-pink-200 text-[11px] font-semibold rounded-full mb-2 w-fit border border-pink-400/30 shadow-sm">
-              <i class="ph-fill ph-flower text-amber-300"></i> Mahayunan Ayuna Kadatuan
-            </span>
-            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-1.5 tracking-tight drop-shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="inline-block w-2.5 h-0.5 bg-pink-400"></span>
+              <span class="text-[11px] font-bold tracking-widest uppercase text-pink-300">
+                Mahayunan Ayuna Kadatuan
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-3xl font-extrabold leading-tight mb-2 tracking-tight drop-shadow-sm">
               Pusat Rekreasi Budaya, Taman Kota, &amp; Ragam Kuliner Tradisi Ciamis
             </h2>
             <p class="text-xs sm:text-sm text-slate-100 leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none drop-shadow">
@@ -458,43 +470,30 @@
           </div>
         </div>
 
-        <!-- FLOATING JALUR SELATAN CARD (Upper Right on Desktop) -->
-        <div class="absolute right-6 top-6 z-20 hidden lg:flex flex-col gap-1.5 bg-slate-950/60 backdrop-blur-md border border-white/20 p-3.5 rounded-2xl w-60 shadow-xl">
-          <div class="flex items-center gap-1.5 text-[10.5px] font-bold text-amber-300 uppercase tracking-wider">
-            <i class="ph-bold ph-compass"></i> Singgah Jalur Selatan
-          </div>
-          <p class="text-[11px] text-slate-200 leading-snug">
-            Melintas ke Pangandaran? Mampir 30–60 mnt ke kuliner, situs Galuh, &amp; Galendo!
-          </p>
-          <button onclick="quickJumpMood('transit')" class="mt-0.5 py-1 px-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10.5px] rounded-lg transition flex items-center justify-center gap-1 shadow-sm">
-            <i class="ph-bold ph-car"></i> Spot Singgah Cepat
-          </button>
-        </div>
-
         <!-- PREV & NEXT BUTTONS -->
         <button onclick="prevHeroSlide()" aria-label="Slide Sebelumnya" class="hero-nav-btn absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <i class="ph-bold ph-caret-left text-lg"></i>
+          <i class="ph-bold ph-caret-left text-base"></i>
         </button>
         <button onclick="nextHeroSlide()" aria-label="Slide Selanjutnya" class="hero-nav-btn absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <i class="ph-bold ph-caret-right text-lg"></i>
+          <i class="ph-bold ph-caret-right text-base"></i>
         </button>
 
         <!-- BOTTOM CONTROLS & LOCATION BADGE -->
         <div class="absolute bottom-3.5 left-6 right-6 sm:bottom-4 sm:left-10 sm:right-10 z-20 flex items-center justify-between pointer-events-none">
-          <!-- Dot Indicators -->
-          <div class="flex items-center gap-2 pointer-events-auto">
-            <button onclick="goToHeroSlide(0)" class="hero-dot-indicator active w-8" data-dot="0" aria-label="Slide 1"></button>
-            <button onclick="goToHeroSlide(1)" class="hero-dot-indicator w-2.5" data-dot="1" aria-label="Slide 2"></button>
-            <button onclick="goToHeroSlide(2)" class="hero-dot-indicator w-2.5" data-dot="2" aria-label="Slide 3"></button>
-            <button onclick="goToHeroSlide(3)" class="hero-dot-indicator w-2.5" data-dot="3" aria-label="Slide 4"></button>
+          <!-- Dash Indicators -->
+          <div class="flex items-center gap-1.5 pointer-events-auto">
+            <button onclick="goToHeroSlide(0)" class="hero-dot-indicator active" data-dot="0" aria-label="Slide 1"></button>
+            <button onclick="goToHeroSlide(1)" class="hero-dot-indicator" data-dot="1" aria-label="Slide 2"></button>
+            <button onclick="goToHeroSlide(2)" class="hero-dot-indicator" data-dot="2" aria-label="Slide 3"></button>
+            <button onclick="goToHeroSlide(3)" class="hero-dot-indicator" data-dot="3" aria-label="Slide 4"></button>
           </div>
 
-          <!-- Location Badge & Slide Counter -->
+          <!-- Location Badge & Slide Counter (Clean non-pill) -->
           <div class="flex items-center gap-2 pointer-events-auto">
-            <div id="heroLocationTag" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-slate-950/50 backdrop-blur-md text-slate-200 text-[11px] font-medium rounded-full border border-white/15 shadow-sm">
+            <div id="heroLocationTag" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 bg-black/60 text-slate-200 text-[11px] font-medium rounded-md border border-white/10">
               <i class="ph-bold ph-map-pin text-amber-400"></i> Alun-Alun Ciamis Kota
             </div>
-            <div class="px-2.5 py-1 bg-slate-950/50 backdrop-blur-md text-slate-200 text-[11px] font-semibold rounded-full border border-white/15 shadow-sm">
+            <div class="px-2 py-1 bg-black/60 text-slate-200 text-[11px] font-semibold rounded-md border border-white/10 font-mono">
               <span id="heroSlideCounter" class="text-white font-bold">1</span> / 4
             </div>
           </div>
@@ -1532,10 +1531,10 @@
       dots.forEach((dot, idx) => {
         if (idx === currentHeroSlide) {
           dot.classList.add('active');
-          dot.style.width = '32px';
+          dot.style.width = '36px';
         } else {
           dot.classList.remove('active');
-          dot.style.width = '10px';
+          dot.style.width = '18px';
         }
       });
 
